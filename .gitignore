@@ -1,0 +1,5 @@
+# dependencies
+client/minecraftbuilds/node_modules
+
+# production
+client/minecraftbuilds/build
