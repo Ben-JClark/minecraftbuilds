@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function ChangeServer() {
+function ServerBrowser() {
   return (
     <>
       <h1>Change the server</h1>
@@ -9,4 +9,4 @@ function ChangeServer() {
   );
 }
 
-export default ChangeServer;
+export default ServerBrowser;

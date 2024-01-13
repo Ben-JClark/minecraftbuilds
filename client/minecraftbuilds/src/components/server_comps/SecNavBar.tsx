@@ -7,8 +7,8 @@ interface Props {
 
 function SecNavBar({ serverName }: Props) {
   return (
-    <nav className="nav">
-      <Link to={`/server/${serverName}/home`} className="server-title">
+    <nav className="sec-nav">
+      <Link to={`/server/${serverName}/home`} className="sec-nav-title">
         {serverName}
       </Link>
       <ul>
