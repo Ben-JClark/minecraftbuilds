@@ -7,8 +7,8 @@ const { pool } = require("./pool");
 async function getServers() {
   try {
     const connection = await pool.getConnection();
-    const servers = (await connection.query("CALL get_servers()"))[0][0];
-    return servers;
+    const serverList = (await connection.query("CALL get_servers()"))[0][0];
+    return serverList;
   } catch (error) {
     console.log("Error getting serverdata: ", error);
     return null;
