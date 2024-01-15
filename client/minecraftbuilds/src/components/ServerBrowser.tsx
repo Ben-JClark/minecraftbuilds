@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { error } from "console";
+import "../styling/PageStyle.css";
 
 type Server = {
   serverName: string;
@@ -45,8 +46,15 @@ function ServerBrowser() {
 
   return (
     <>
-      <h1>Change the server</h1>
-      <Link to="/server/Hubcraft/home">HubCraft</Link>
+      <div className="grid-main">
+        <div className="page">
+          <div className="options">options</div>
+          <div className="content">content</div>
+        </div>
+        <div className="sidebar" id="sidebar-l"></div>
+        <div className="sidebar" id="sidebar-r"></div>
+      </div>
+      {/* <Link to="/server/Hubcraft/home">HubCraft</Link> */}
     </>
   );
 }
