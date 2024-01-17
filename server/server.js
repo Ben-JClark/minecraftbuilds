@@ -10,7 +10,7 @@ app.get("/", async (req, res) => {
   const serverList = await getServers();
   if (serverList !== null) {
     console.log("Sending server data");
-    res.json({ serverList }); // Send it as JSON response
+    res.status(200).json({ serverList }); // Send it as JSON response
   } else {
     console.log("Error sending server data");
     res.status(500).json({ error: "Failed to retreive server data." });
