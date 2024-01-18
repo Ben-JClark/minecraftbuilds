@@ -1,7 +1,5 @@
 .grid-main {
   display: grid;
-  grid-template-areas: "sidebar-l page sidebar-r";
-  grid-template-columns: 1fr 3fr 1fr;
 }
 
 .page {
@@ -25,4 +23,26 @@
 
 .sidebar {
   background-color: lightgray;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .grid-main {
+    grid-template-areas: "page";
+    grid-template-columns: 1fr;
+  }
+}
+/* Laptop / Tablet */
+@media (min-width: 641px) {
+  .grid-main {
+    grid-template-areas: "sidebar-l page sidebar-r";
+    grid-template-columns: 1fr 6fr 1fr;
+  }
+}
+/* Desktop 1080 */
+@media (min-width: 1281px) {
+  .grid-main {
+    grid-template-areas: "sidebar-l page sidebar-r";
+    grid-template-columns: 1fr 4fr 1fr;
+  }
 }

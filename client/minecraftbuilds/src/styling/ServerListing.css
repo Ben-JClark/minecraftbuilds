@@ -1,0 +1,18 @@
+.sl-button {
+  padding: 2%;
+  cursor: pointer;
+}
+
+.sl-header {
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.sl-tag {
+  margin: 0;
+  padding: 0;
+}
+
+.sl-desc {
+  color: #636363;
+}
