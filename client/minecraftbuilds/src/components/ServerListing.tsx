@@ -9,8 +9,8 @@ interface Props {
 function ServerListing({ server }: Props) {
   const navigate = useNavigate();
   const handleClick = () => {
-    console.log(`redirecting to /server/${server.serverId}/home`);
-    navigate(`/server/${server.serverId}/home`);
+    console.log(`redirecting to /server/${server.serverName}/${server.serverId}/home`);
+    navigate(`/server/${server.serverName}/${server.serverId}/home`);
   };
 
   return (

@@ -17,7 +17,7 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
 
         {/* Nested routes for server pages */}
-        <Route path="/server/:serverName/*" element={<ServerPage />} />
+        <Route path="/server/:serverName/:serverID/*" element={<ServerPage />} />
       </Routes>
     </>
   );
