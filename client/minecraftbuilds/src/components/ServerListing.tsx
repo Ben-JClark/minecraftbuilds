@@ -1,21 +1,31 @@
 import type { Server } from "./ServerBrowser";
+import { Link, useNavigate } from "react-router-dom";
+import "../styling/ServerListing.css";
 
 interface Props {
   server: Server;
 }
 
 function ServerListing({ server }: Props) {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    console.log(`redirecting to /server/${server.serverName}/${server.serverId}/home`);
+    navigate(`/server/${server.serverName}/${server.serverId}/home`);
+  };
+
   return (
-    <div>
-      <h1>{server.serverName}</h1>
-      <p>
+    <div onClick={handleClick} className="sl-button">
+      <h1 className="sl-header">{server.serverName}</h1>
+      <p className="sl-tag">
         Listed by {server.ownerUsername} {timeSince(server.listedDate)} ago
       </p>
-      <p>
-        {server.gamemode} | {server.configuration} | {server.region}
+      <p className="sl-tag">
+        {server.gamemode} | {server.configuration} | {server.region} region
       </p>
-      <p>{server.userCount}</p>
-      <p>{server.shortDescription}</p>
+      <p className="sl-tag">
+        {server.userCount} {server.userCount === 1 ? "Member" : "Members"}
+      </p>
+      <p className="sl-desc">{server.shortDescription}</p>
     </div>
   );
 }

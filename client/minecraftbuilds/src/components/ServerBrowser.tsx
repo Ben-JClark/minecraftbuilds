@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { error } from "console";
 import ServerListing from "./ServerListing";
 import "../styling/PageStyle.css";
 import "../styling/ServerBrowser.css";
@@ -62,7 +61,7 @@ function ServerBrowser() {
           <div className="options">options</div>
           <ul className="sl-container">
             {serverList.map((server: Server) => (
-              <li key={server.serverId}>
+              <li className="sl-item" key={server.serverId}>
                 <ServerListing server={server} />
               </li>
             ))}
@@ -71,7 +70,6 @@ function ServerBrowser() {
         <div className="sidebar" id="sidebar-l"></div>
         <div className="sidebar" id="sidebar-r"></div>
       </div>
-      {/* <Link to="/server/Hubcraft/home">HubCraft</Link> */}
     </>
   );
 }

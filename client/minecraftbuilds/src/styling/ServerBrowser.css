@@ -1,5 +1,36 @@
 .sl-container {
   display: flex;
-  flex-direction: column;
   flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 0;
+  padding: 0;
+}
+
+.sl-item {
+  border: 1px solid black;
+  border-radius: 5px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .sl-item {
+    width: 95%;
+  }
+}
+/* Laptop / Tablet */
+@media (min-width: 641px) {
+  .sl-item {
+    width: 95%;
+  }
+}
+/* Desktop */
+@media (min-width: 1281px) {
+  .sl-item {
+    width: 47%;
+  }
 }
