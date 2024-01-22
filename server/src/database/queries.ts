@@ -1,4 +1,3 @@
-import { PoolConnection } from "mysql2";
 import { pool } from "./pool.js";
 
 /**
@@ -6,13 +5,16 @@ import { pool } from "./pool.js";
  * @returns null or a list of servers in json format
  */
 async function getServers() {
-  console.log("getServers");
   let connection;
   try {
     connection = await pool.getConnection();
-    const [serverList] = await connection.query("CALL get_servers()");
-    console.log(serverList);
-    return serverList;
+    const [response] = await connection.query("CALL get_servers()");
+    if (Array.isArray(response)) {
+      return response[0];
+    } else {
+      console.log("Error: Response from sql was not in array format");
+      return null;
+    }
   } catch (error) {
     console.log("Error getting serverdata: ", error);
     return null;
@@ -32,8 +34,12 @@ async function getLongDescription(id: number) {
   try {
     connection = await pool.getConnection();
     const [response] = await connection.query("CALL get_long_description(?)", [id]);
-    console.log("Got descriptoin: ", response);
-    return response;
+    if (Array.isArray(response)) {
+      return response[0];
+    } else {
+      console.log("Error: Response from sql was not in array format");
+      return null;
+    }
   } catch (error) {
     console.log("Error getting long descripton: ", error);
     return null;

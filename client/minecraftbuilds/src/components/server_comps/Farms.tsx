@@ -1,11 +1,14 @@
 interface Props {
   serverName: string;
+  serverID: number;
 }
 
-function Farms({ serverName }: Props) {
+function Farms({ serverName, serverID }: Props) {
   return (
     <>
-      <h1>{serverName} Farms</h1>
+      <h1>
+        Server: {serverName} ID: {serverID} Farms
+      </h1>
     </>
   );
 }

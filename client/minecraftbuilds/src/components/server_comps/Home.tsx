@@ -14,9 +14,12 @@ function Home({ serverName, serverID }: Props) {
       try {
         const response = await fetch(`http://localhost:5000/server/${serverName}/${serverID}/home`);
         const data = await response.json();
-        const description = data.description[0].long_description;
-        if (data.error === undefined && description !== undefined) {
-          setLongDescription(description);
+        if (data.error === undefined) {
+          if (Array.isArray(data) && data[0].long_description !== undefined) {
+            setLongDescription(data[0].long_description);
+          } else {
+            console.log("Error long description is in incorrect format");
+          }
         } else {
           console.log("Error when fetching long descripton: ", data.error);
         }

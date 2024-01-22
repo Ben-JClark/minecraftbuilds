@@ -21,15 +21,13 @@ function ServerBrowser() {
   const [serverList, setServerList] = useState<Server[]>([]);
 
   // Only when mounting, fetch and map all the Server data
-  console.log("test");
   useEffect(() => {
     async function getServerList() {
       try {
         const response = await fetch("http://localhost:5000/");
         const data = await response.json();
-
-        if (data.error === undefined && data.serverList !== undefined) {
-          const serverData: Server[] = data.serverList.map((rawServerData: any) => ({
+        if (data.error === undefined && Array.isArray(data)) {
+          const serverData: Server[] = data.map((rawServerData: any) => ({
             serverName: rawServerData.server_name,
             serverId: rawServerData.server_id,
             shortDescription: rawServerData.short_description,
@@ -42,7 +40,6 @@ function ServerBrowser() {
             userCount: rawServerData.user_count,
           }));
           setServerList(serverData);
-          console.log("Fetched serverdata: ", serverData);
         } else {
           console.log("Error received from the server: ", data.error);
         }

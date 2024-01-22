@@ -3,29 +3,30 @@ import "../../styling/SecNavBar.css";
 
 interface Props {
   serverName: string;
+  serverID: number;
 }
 
-function SecNavBar({ serverName }: Props) {
+function SecNavBar({ serverName, serverID }: Props) {
   return (
     <nav className="sec-nav">
-      <Link to={`/server/${serverName}/home`} className="sec-nav-title">
+      <Link to={`/server/${serverName}/${serverID}/home`} className="sec-nav-title">
         {serverName}
       </Link>
       <ul>
         <li>
-          <Link to={`/server/${serverName}/home`}>Home</Link>
+          <Link to={`/server/${serverName}/${serverID}/home`}>Home</Link>
         </li>
         <li>
-          <Link to={`/server/${serverName}/bases`}>Bases</Link>
+          <Link to={`/server/${serverName}/${serverID}/bases`}>Bases</Link>
         </li>
         <li>
-          <Link to={`/server/${serverName}/shops`}>Shops</Link>
+          <Link to={`/server/${serverName}/${serverID}/shops`}>Shops</Link>
         </li>
         <li>
-          <Link to={`/server/${serverName}/farms`}>Farms</Link>
+          <Link to={`/server/${serverName}/${serverID}/farms`}>Farms</Link>
         </li>
         <li>
-          <Link to={`/server/${serverName}/players`}>Players</Link>
+          <Link to={`/server/${serverName}/${serverID}/players`}>Players</Link>
         </li>
       </ul>
     </nav>

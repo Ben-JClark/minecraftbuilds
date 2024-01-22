@@ -17,13 +17,13 @@ function ServerPage() {
     if (serverName !== undefined && !isNaN(id)) {
       return (
         <>
-          <SecNavBar serverName={serverName} />
+          <SecNavBar serverName={serverName} serverID={id} />
           <Routes>
             <Route path="/home" element={<Home serverName={serverName} serverID={id} />} />
-            <Route path="/bases" element={<Bases serverName={serverName} />} />
-            <Route path="/shops" element={<Shops serverName={serverName} />} />
-            <Route path="/farms" element={<Farms serverName={serverName} />} />
-            <Route path="/players" element={<Players serverName={serverName} />} />
+            <Route path="/bases" element={<Bases serverName={serverName} serverID={id} />} />
+            <Route path="/shops" element={<Shops serverName={serverName} serverID={id} />} />
+            <Route path="/farms" element={<Farms serverName={serverName} serverID={id} />} />
+            <Route path="/players" element={<Players serverName={serverName} serverID={id} />} />
           </Routes>
         </>
       );

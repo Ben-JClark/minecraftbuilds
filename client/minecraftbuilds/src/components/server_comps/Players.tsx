@@ -1,11 +1,14 @@
 interface Props {
   serverName: string;
+  serverID: number;
 }
 
-function Players({ serverName }: Props) {
+function Players({ serverName, serverID }: Props) {
   return (
     <>
-      <h1>{serverName} Players</h1>
+      <h1>
+        Server: {serverName} ID: {serverID} Players
+      </h1>
     </>
   );
 }

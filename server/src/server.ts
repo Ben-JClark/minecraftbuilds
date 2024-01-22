@@ -15,7 +15,7 @@ app.get("/", async (req: Request, res: Response) => {
   const serverList = await getServers();
   if (serverList !== null) {
     console.log("Sending server list", serverList);
-    res.status(200).json({ serverList }); // Send it as JSON response
+    res.status(200).json(serverList); // Send it as JSON response
   } else {
     console.log("Error sending server list");
     res.status(500).json({ error: "Failed to retreive server list." });
@@ -25,7 +25,7 @@ app.get("/", async (req: Request, res: Response) => {
 app.get("/server/:serverName/:serverID/home", async (req: Request, res: Response) => {
   const description = await getLongDescription(parseInt(req.params.serverID));
   if (description !== null) {
-    res.status(200).json({ description }); // Send it as JSON response
+    res.status(200).json(description); // getLongDescription has already fromatted as JSON response
   } else {
     console.log("Error sending server data");
     res.status(500).json({ error: "Failed to retreive server data." });
