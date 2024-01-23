@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "../../styling/Home.css";
 
 interface Props {
   serverName: string;
@@ -31,12 +32,14 @@ function Home({ serverName, serverID }: Props) {
   }, []);
 
   return (
-    <>
-      <h1>
-        Name: {serverName} ID: {serverID}
-      </h1>
-      <p> {longDescription}</p>
-    </>
+    <div className="home">
+      <div className="options">
+        <h1>{serverName}</h1>
+      </div>
+      <div className="content">
+        <p> {longDescription}</p>
+      </div>
+    </div>
   );
 }
 

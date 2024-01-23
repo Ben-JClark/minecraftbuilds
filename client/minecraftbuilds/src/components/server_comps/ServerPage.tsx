@@ -18,13 +18,19 @@ function ServerPage() {
       return (
         <>
           <SecNavBar serverName={serverName} serverID={id} />
-          <Routes>
-            <Route path="/home" element={<Home serverName={serverName} serverID={id} />} />
-            <Route path="/bases" element={<Bases serverName={serverName} serverID={id} />} />
-            <Route path="/shops" element={<Shops serverName={serverName} serverID={id} />} />
-            <Route path="/farms" element={<Farms serverName={serverName} serverID={id} />} />
-            <Route path="/players" element={<Players serverName={serverName} serverID={id} />} />
-          </Routes>
+          <div className="grid-main">
+            <div className="page">
+              <Routes>
+                <Route path="/home" element={<Home serverName={serverName} serverID={id} />} />
+                <Route path="/bases" element={<Bases serverName={serverName} serverID={id} />} />
+                <Route path="/shops" element={<Shops serverName={serverName} serverID={id} />} />
+                <Route path="/farms" element={<Farms serverName={serverName} serverID={id} />} />
+                <Route path="/players" element={<Players serverName={serverName} serverID={id} />} />
+              </Routes>
+            </div>
+            <div className="sidebar" id="sidebar-l"></div>
+            <div className="sidebar" id="sidebar-r"></div>
+          </div>
         </>
       );
     }

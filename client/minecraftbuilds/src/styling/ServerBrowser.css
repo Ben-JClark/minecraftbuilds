@@ -16,6 +16,11 @@
   margin-bottom: 10px;
 }
 
+.sl-item:hover {
+  border-color: orange;
+  background-color: lightgrey;
+}
+
 /* Mobile */
 @media (max-width: 640px) {
   .sl-item {

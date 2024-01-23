@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ServerListing from "./ServerListing";
-import "../styling/PageStyle.css";
 import "../styling/ServerBrowser.css";
 
 type Server = {
@@ -56,13 +55,15 @@ function ServerBrowser() {
       <div className="grid-main">
         <div className="page">
           <div className="options">options</div>
-          <ul className="sl-container">
-            {serverList.map((server: Server) => (
-              <li className="sl-item" key={server.serverId}>
-                <ServerListing server={server} />
-              </li>
-            ))}
-          </ul>
+          <div className="content">
+            <ul className="sl-container">
+              {serverList.map((server: Server) => (
+                <li className="sl-item" key={server.serverId}>
+                  <ServerListing server={server} />
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         <div className="sidebar" id="sidebar-l"></div>
         <div className="sidebar" id="sidebar-r"></div>

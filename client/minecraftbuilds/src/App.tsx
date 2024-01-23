@@ -6,6 +6,8 @@ import ServerBrowser from "./components/ServerBrowser";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import ServerPage from "./components/server_comps/ServerPage";
+// This styling will style pages for all components
+import "./styling/PageStyle.css";
 
 function App() {
   return (
