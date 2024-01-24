@@ -58,7 +58,9 @@ function Bases({ serverName, serverID }: Props) {
         console.log("Error when fetching list of bases: ", error);
       }
     }
-  });
+
+    getBaseList();
+  }, []);
 
   return (
     <>
