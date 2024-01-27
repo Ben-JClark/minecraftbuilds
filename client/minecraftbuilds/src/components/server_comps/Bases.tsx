@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import BaseListing from "./BaseListing";
+import "../../styling/Bases.css";
 
 interface Props {
   serverName: string;
@@ -8,12 +10,12 @@ interface Props {
 type BasePreview = {
   baseId: number;
   baseName: string;
-  mainImageUrl: string;
+  mainImageName: string;
   ownerId: number;
   ownerName: string;
   listedDate: Date;
   xCord: number | undefined;
-  yCord: number | undefined;
+  zCord: number | undefined;
   forSale: boolean | undefined;
   purchasePrice: number | undefined;
   purchaseItem: string | undefined;
@@ -32,22 +34,23 @@ function Bases({ serverName, serverID }: Props) {
         const data = await response.json();
         if (data.error === undefined) {
           if (Array.isArray(data)) {
-            const baseList: BasePreview[] = data.map((baseData: any) => ({
+            const list: BasePreview[] = data.map((baseData: any) => ({
               baseId: baseData.id,
               baseName: baseData.base_name,
-              mainImageUrl: baseData.main_image_url,
+              mainImageName: baseData.main_image_name,
               ownerId: baseData.owner_id,
-              ownerName: baseData.owner_name,
+              ownerName: baseData.owner_username,
               listedDate: new Date(baseData.created_at),
-              xCord: baseData.x_coordindate,
-              yCord: baseData.y_coordindate,
+              xCord: baseData.x_coordinate,
+              zCord: baseData.z_coordinate,
               forSale: baseData.for_sale,
               purchasePrice: baseData.purchase_price,
               purchaseItem: baseData.purchase_item,
               buyerID: baseData.buyer_id,
-              buyerName: baseData.buyer_name,
+              buyerName: baseData.buyer_username,
             }));
-            setBaseList(baseList);
+            setBaseList(list);
+            console.log(baseList);
           } else {
             console.log("Error baselist is not in array format");
           }
@@ -63,12 +66,22 @@ function Bases({ serverName, serverID }: Props) {
   }, []);
 
   return (
-    <>
-      <h1>
-        Server: {serverName} ID: {serverID} Bases
-      </h1>
-    </>
+    <div className="bases">
+      <div className="options">
+        <h1>{serverName} Bases</h1>
+      </div>
+      <div className="content">
+        <ul className="b-container">
+          {baseList.map((base: BasePreview) => (
+            <li className="b-item" key={base.baseId}>
+              <BaseListing base={base} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
 
 export default Bases;
+export type { BasePreview };

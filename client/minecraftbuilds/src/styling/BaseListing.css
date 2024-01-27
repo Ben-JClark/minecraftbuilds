@@ -1,0 +1,35 @@
+.b-button {
+  cursor: pointer;
+}
+
+.b-title {
+  text-align: center;
+  background-color: lightgrey;
+}
+
+.b-title h2 {
+  margin: 0;
+}
+
+.b-sale {
+  background-color: lightcoral;
+}
+
+.b-sale p {
+  margin: 0;
+}
+
+.b-image {
+  aspect-ratio: 2 / 1;
+  width: 100%;
+}
+
+.b-tags {
+  background-color: lightgray;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+.b-tags p {
+  margin: 0;
+}
