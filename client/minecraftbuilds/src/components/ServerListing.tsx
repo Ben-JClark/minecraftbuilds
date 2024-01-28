@@ -43,3 +43,4 @@ function timeSince(postDate: Date): string {
 }
 
 export default ServerListing;
+export { timeSince };

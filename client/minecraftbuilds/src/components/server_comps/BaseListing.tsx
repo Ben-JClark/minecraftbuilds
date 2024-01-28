@@ -1,4 +1,5 @@
 import type { BasePreview } from "./Bases";
+import { timeSince } from "../ServerListing";
 import "../../styling/BaseListing.css";
 
 interface Props {
@@ -18,9 +19,11 @@ function BaseListing({ base }: Props) {
       <div className="b-sale">
         <p>{base.forSale ? `For Sale. ${base.purchasePrice} ${base.purchaseItem}` : null}</p>
       </div>
-      <div className="b-image"></div>
+      <img src="/test-image.png" alt={base.baseName} className="b-image"></img>
       <div className="b-tags">
-        <p>Listed by {base.ownerName}</p>
+        <p>
+          Listed by {base.ownerName} {timeSince(base.listedDate)} ago
+        </p>
         <p>
           Located {base.xCord} // {base.zCord}
         </p>
