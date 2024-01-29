@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 const app: Express = express();
-import { getServers, getLongDescription, getBases } from "./database/queries.js";
+import { getServers, getLongDescription, getBases, addBase } from "./database/queries.js";
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -34,12 +34,25 @@ app.get("/server/:serverName/:serverID/home", async (req: Request, res: Response
 
 app.get("/server/:serverName/:serverID/bases", async (req: Request, res: Response) => {
   const baseList = await getBases(parseInt(req.params.serverID));
+  console.log("Baselist: ", baseList);
   if (baseList !== null) {
     res.status(200).json(baseList);
   } else {
     console.log("Error sending the list of bases");
     res.status(500).json({ error: "Failed to retreive the list of bases." });
   }
+});
+
+app.post("/server/:serverName/:serverID/bases", async (req: Request, res: Response) => {
+  //const response = await addBase(req.bo);
+  console.log("base body: ", req.body);
+  // if (response !== null) {
+  //   res.status(200).json(response);
+  // } else {
+  //   console.log("Error adding a base");
+  //   res.status(500).json({ error: "Failed to add the base." });
+  // }
+  res.status(200).send();
 });
 
 app.listen(5000);

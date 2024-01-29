@@ -1,6 +1,6 @@
 import type { BasePreview } from "./Bases";
-import { timeSince } from "../ServerListing";
-import "../../styling/BaseListing.css";
+import { timeSince } from "../../ServerListing";
+import "../../../styling/BaseListing.css";
 
 interface Props {
   base: BasePreview;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import BaseListing from "./BaseListing";
-import "../../styling/Bases.css";
+import "../../../styling/Bases.css";
+import ButtonAddBase from "./ButtonAddBase";
 
 interface Props {
   serverName: string;
@@ -49,8 +50,8 @@ function Bases({ serverName, serverID }: Props) {
               buyerID: baseData.buyer_id,
               buyerName: baseData.buyer_username,
             }));
+            console.log(list);
             setBaseList(list);
-            console.log(baseList);
           } else {
             console.log("Error baselist is not in array format");
           }
@@ -72,6 +73,9 @@ function Bases({ serverName, serverID }: Props) {
       </div>
       <div className="content">
         <ul className="b-container">
+          <li className="b-item" key={"AddBaseListing"}>
+            <ButtonAddBase serverName={serverName} serverID={serverID} />
+          </li>
           {baseList.map((base: BasePreview) => (
             <li className="b-item" key={base.baseId}>
               <BaseListing base={base} />

@@ -1,6 +1,7 @@
 import SecNavBar from "./SecNavBar";
 import Home from "./Home";
-import Bases from "./Bases";
+import Bases from "./base_comps/Bases";
+import AddBase from "./base_comps/AddBase";
 import Shops from "./Shops";
 import Farms from "./Farms";
 import Players from "./Players";
@@ -23,6 +24,7 @@ function ServerPage() {
               <Routes>
                 <Route path="/home" element={<Home serverName={serverName} serverID={id} />} />
                 <Route path="/bases" element={<Bases serverName={serverName} serverID={id} />} />
+                <Route path="/bases/add" element={<AddBase serverName={serverName} serverID={id} />} />
                 <Route path="/shops" element={<Shops serverName={serverName} serverID={id} />} />
                 <Route path="/farms" element={<Farms serverName={serverName} serverID={id} />} />
                 <Route path="/players" element={<Players serverName={serverName} serverID={id} />} />
