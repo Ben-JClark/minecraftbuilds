@@ -1,0 +1,14 @@
+/* Mobile */
+@media (max-width: 640px) {
+  .base-descr-input {
+    width: 90%;
+    height: 30em;
+  }
+}
+/* Laptop / Tablet */
+@media (min-width: 641px) {
+  .base-descr-input {
+    width: 80%;
+    height: 25em;
+  }
+}

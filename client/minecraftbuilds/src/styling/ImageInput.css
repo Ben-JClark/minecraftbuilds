@@ -1,0 +1,11 @@
+.image-preview-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.image-preview {
+  max-width: 420px;
+  height: auto;
+}

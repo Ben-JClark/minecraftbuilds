@@ -1,4 +1,7 @@
 import { pool } from "./pool.js";
+import type { Base } from "../validation/ValidBase.js";
+import { validBase } from "../validation/ValidBase.js";
+import type { ValidationResult } from "../validation/TypeValidation.js";
 
 /**
  * Query the mysql database to get a list of servers
@@ -80,30 +83,27 @@ async function getBases(serverID: number) {
  * This query does not add any images
  * @returns null if there is an error, false if mysql couldn't add the base, true if the base was added
  */
-async function addBase(
-  serverID: number,
-  ownerID: number,
-  baseName: string,
-  baseDescription: string,
-  xCord: number,
-  zCord: number,
-  forSale: boolean,
-  purchaseItem: string,
-  purchaseMethod: string
-) {
+async function addBase(base: Base) {
+  // validate the base passed
+  const baseValidation: ValidationResult = validBase(base);
+  if (baseValidation.isValid !== true) {
+    return null;
+  }
+
   let connection;
   try {
     connection = await pool.getConnection();
     const [response] = await connection.query("CALL add_base(?, ?, ?, ?, ?, ?, ?, ?, ?)", [
-      serverID,
-      ownerID,
-      baseName,
-      baseDescription,
-      xCord,
-      zCord,
-      forSale,
-      purchaseItem,
-      purchaseMethod,
+      base.server_id,
+      base.owner_id,
+      base.base_name,
+      base.base_description,
+      base.x_coordinate,
+      base.z_coordinate,
+      base.for_sale,
+      base.purchase_price,
+      base.purchase_item,
+      base.purchase_method,
     ]);
     if (Array.isArray(response)) {
       const rowsAffected = response[0]; // TODO get the number of rows affected, if 1, then success
