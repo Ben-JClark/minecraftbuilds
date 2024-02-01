@@ -4,6 +4,7 @@ import morgan from "morgan";
 const app: Express = express();
 import { getServers, getLongDescription, getBases, addBase } from "./database/queries.js";
 import type { Base } from "./validation/ValidBase.js";
+import type { ValidationResult } from "./validation/TypeValidation.js";
 
 // app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -46,23 +47,13 @@ app.get("/server/:serverName/:serverID/bases", async (req: Request, res: Respons
 });
 
 app.post("/server/:serverName/:serverID/bases", async (req: Request, res: Response) => {
-  //const response = await addBase(req.bo);
   const base = req.body as Base;
-  // const base = req.body.map()
-
   base.server_id = parseInt(req.params.serverID);
   base.owner_id = 1;
 
   console.log("base: ", base);
-  addBase(base);
-
-  // if (response !== null) {
-  //   res.status(200).json(response);
-  // } else {
-  //   console.log("Error adding a base");
-  //   res.status(500).json({ error: "Failed to add the base." });
-  // }
-  res.status(200).send();
+  const response: ValidationResult = await addBase(base);
+  res.status(response.statusCode).json(response);
 });
 
 app.listen(5000);

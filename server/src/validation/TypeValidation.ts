@@ -1,5 +1,6 @@
 type ValidationResult = {
-  isValid: boolean;
+  validRequest: boolean;
+  statusCode: number;
   entryFeild?: string;
   errorMessage?: string;
 };
@@ -29,13 +30,14 @@ export enum IntSignedMax {
  */
 function validVarchar(input: any, minLength: number, maxLength: number): ValidationResult {
   let response: ValidationResult = {
-    isValid: false,
+    validRequest: false,
+    statusCode: 500,
   };
   if (input !== undefined) {
     if (input !== null) {
       if (input.length >= minLength) {
         if (input.length <= maxLength) {
-          response.isValid = true;
+          response.validRequest = true;
         } else {
           response.errorMessage = `Your input is too long! must enter less than ${maxLength} ${
             maxLength > 0 ? "characters" : "character"
@@ -53,6 +55,11 @@ function validVarchar(input: any, minLength: number, maxLength: number): Validat
     response.errorMessage = "Your input cannot be undefined";
   }
 
+  // invalid input = 400 Bad Request
+  if (response.validRequest === false) {
+    response.statusCode = 400;
+  }
+
   return response;
 }
 
@@ -64,7 +71,8 @@ function validVarchar(input: any, minLength: number, maxLength: number): Validat
  */
 function validUnsignedInt(input: any, intUnsignedMax: IntUnsignedMax): ValidationResult {
   let response: ValidationResult = {
-    isValid: false,
+    validRequest: false,
+    statusCode: 500,
   };
 
   if (input !== undefined) {
@@ -72,7 +80,7 @@ function validUnsignedInt(input: any, intUnsignedMax: IntUnsignedMax): Validatio
       if (Number.isInteger(input)) {
         if (input >= 0) {
           if (input <= intUnsignedMax) {
-            response.isValid = true;
+            response.validRequest = true;
           } else {
             response.errorMessage = `Your input is too big! Keep it below ${intUnsignedMax}`;
           }
@@ -89,6 +97,11 @@ function validUnsignedInt(input: any, intUnsignedMax: IntUnsignedMax): Validatio
     response.errorMessage = "Your input cannot be undefined";
   }
 
+  // invalid input = 400 Bad Request
+  if (response.validRequest === false) {
+    response.statusCode = 400;
+  }
+
   return response;
 }
 
@@ -100,7 +113,8 @@ function validUnsignedInt(input: any, intUnsignedMax: IntUnsignedMax): Validatio
  */
 function validSignedInt(input: any, intSignedMax: IntSignedMax): ValidationResult {
   let response: ValidationResult = {
-    isValid: false,
+    validRequest: false,
+    statusCode: 500,
   };
 
   if (input !== undefined) {
@@ -108,7 +122,7 @@ function validSignedInt(input: any, intSignedMax: IntSignedMax): ValidationResul
       if (Number.isInteger(input)) {
         if (input >= -intSignedMax) {
           if (input <= intSignedMax) {
-            response.isValid = true;
+            response.validRequest = true;
           } else {
             response.errorMessage = `Your input is too big! Keep it below ${intSignedMax}`;
           }
@@ -125,18 +139,24 @@ function validSignedInt(input: any, intSignedMax: IntSignedMax): ValidationResul
     response.errorMessage = "Your input cannot be undefined";
   }
 
+  // invalid input = 400 Bad Request
+  if (response.validRequest === false) {
+    response.statusCode = 400;
+  }
+
   return response;
 }
 
 function validBoolean(input: any) {
   let response: ValidationResult = {
-    isValid: false,
+    validRequest: false,
+    statusCode: 500,
   };
 
   if (input !== undefined) {
     if (input !== null) {
       if (typeof input == "boolean") {
-        response.isValid = true;
+        response.validRequest = true;
       } else {
         response.errorMessage = "Your input must be true, false, 1, or 0";
       }
@@ -145,6 +165,11 @@ function validBoolean(input: any) {
     }
   } else {
     response.errorMessage = "Your input cannot be undefined";
+  }
+
+  // invalid input = 400 Bad Request
+  if (response.validRequest === false) {
+    response.statusCode = 400;
   }
 
   return response;

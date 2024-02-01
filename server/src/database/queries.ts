@@ -83,12 +83,12 @@ async function getBases(serverID: number) {
  * This query does not add any images
  * @returns null if there is an error, false if mysql couldn't add the base, true if the base was added
  */
-async function addBase(base: Base) {
+async function addBase(base: Base): Promise<ValidationResult> {
   // validate the base passed
   const baseValidation: ValidationResult = validBase(base);
-  if (baseValidation.isValid !== true) {
+  if (baseValidation.validRequest !== true) {
     console.log("Base is not valid: ", baseValidation);
-    return null;
+    return baseValidation;
   }
 
   let connection;
@@ -107,16 +107,23 @@ async function addBase(base: Base) {
       base.purchase_method,
     ]);
     if (Array.isArray(response)) {
-      const rowsAffected = response[0]; // TODO get the number of rows affected, if 1, then success
-      console.log(rowsAffected);
-      return true;
+      //const rowsAffected = response[0]; // TODO get the number of rows affected, if 1, then success
+      //console.log(rowsAffected);
+      baseValidation.statusCode = 201;
+      return baseValidation;
     } else {
       console.log("Error: Response from sql was not in array format");
-      return null;
+      baseValidation.validRequest = false;
+      baseValidation.statusCode = 500;
+      baseValidation.errorMessage = "Couldn't verify if the base was uploaded";
+      return baseValidation;
     }
   } catch (error) {
     console.log("Error getting the list of bases: ", error);
-    return null;
+    baseValidation.validRequest = false;
+    baseValidation.statusCode = 500;
+    baseValidation.errorMessage = "Could not upload the base to the database";
+    return baseValidation;
   } finally {
     if (connection !== undefined) {
       connection.release();

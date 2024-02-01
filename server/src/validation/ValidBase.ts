@@ -23,25 +23,25 @@ type Base = {
 
 function validBase(base: Base): ValidationResult {
   let response: ValidationResult = validUnsignedInt(base.server_id, IntUnsignedMax.UnsignedSmallIntMax);
-  if (response.isValid) {
+  if (response.validRequest) {
     response = validUnsignedInt(base.owner_id, IntUnsignedMax.UnsignedSmallIntMax);
-    if (response.isValid) {
+    if (response.validRequest) {
       response = validVarchar(base.base_name, 1, 32);
-      if (response.isValid) {
+      if (response.validRequest) {
         response = validVarchar(base.base_description, 0, 1000);
-        if (response.isValid) {
+        if (response.validRequest) {
           response = validSignedInt(base.x_coordinate, IntSignedMax.SignedMediumIntMax);
-          if (response.isValid) {
+          if (response.validRequest) {
             response = validSignedInt(base.z_coordinate, IntSignedMax.SignedMediumIntMax);
-            if (response.isValid) {
+            if (response.validRequest) {
               response = validBoolean(base.for_sale);
-              if (response.isValid) {
+              if (response.validRequest) {
                 response = validUnsignedInt(base.purchase_price, IntUnsignedMax.UnsignedSmallIntMax);
-                if (response.isValid) {
+                if (response.validRequest) {
                   response = validVarchar(base.purchase_item, 0, 41);
-                  if (response.isValid) {
+                  if (response.validRequest) {
                     response = validVarchar(base.purchase_method, 0, 255);
-                    if (response.isValid) {
+                    if (response.validRequest) {
                       // response is still valid so return it
                     } else {
                       response.entryFeild = "purchase_method";
