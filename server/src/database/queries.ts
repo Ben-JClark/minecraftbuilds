@@ -87,6 +87,7 @@ async function addBase(base: Base) {
   // validate the base passed
   const baseValidation: ValidationResult = validBase(base);
   if (baseValidation.isValid !== true) {
+    console.log("Base is not valid: ", baseValidation);
     return null;
   }
 

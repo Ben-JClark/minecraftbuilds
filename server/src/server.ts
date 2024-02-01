@@ -48,6 +48,11 @@ app.get("/server/:serverName/:serverID/bases", async (req: Request, res: Respons
 app.post("/server/:serverName/:serverID/bases", async (req: Request, res: Response) => {
   //const response = await addBase(req.bo);
   const base = req.body as Base;
+  // const base = req.body.map()
+
+  base.server_id = parseInt(req.params.serverID);
+  base.owner_id = 1;
+
   console.log("base: ", base);
   addBase(base);
 
