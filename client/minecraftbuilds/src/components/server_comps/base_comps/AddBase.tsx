@@ -7,6 +7,9 @@ type baseFormData = {
   base_name: string;
   base_description: string;
   for_sale: boolean;
+  purchase_price: number;
+  purchase_item: string;
+  purchase_method: string;
 };
 
 type BaseImage = {
@@ -24,6 +27,9 @@ function AddBase({ serverName, serverID }: Props) {
     base_name: "",
     base_description: "",
     for_sale: false,
+    purchase_price: 0,
+    purchase_item: "",
+    purchase_method: "",
   });
   const [images, setImages] = useState<BaseImage[]>([]);
 
@@ -36,23 +42,41 @@ function AddBase({ serverName, serverID }: Props) {
    */
   function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) {
     if (e.target.value !== undefined) {
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value,
-      });
+      if (e.target.value === "true") {
+        setFormData({
+          ...formData,
+          [e.target.name]: true,
+        });
+      } else if (e.target.value === "false") {
+        setFormData({
+          ...formData,
+          [e.target.name]: false,
+        });
+      } else {
+        setFormData({
+          ...formData,
+          [e.target.name]: e.target.value,
+        });
+      }
     }
     console.log(formData);
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault(); // Prevents the default form from submitting
+    let response;
     try {
-      const response = await axios.post(`http://localhost:5000/server/${serverName}/${serverID}/bases`, formData, {
+      response = await axios.post(`http://localhost:5000/server/${serverName}/${serverID}/bases`, formData, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-    } catch (error) {
-      console.log("Error submiting form to add the base: ", error);
+    } catch (error: any) {
+      if (error.response) {
+        console.log("Error posting base to server: ", error.response.data);
+      } else {
+        console.log("General Error posting base to server: ", error.message);
+      }
     }
   }
 
@@ -69,6 +93,14 @@ function AddBase({ serverName, serverID }: Props) {
             <br />
             <input type="text" id="base_name" name="base_name" onChange={handleChange}></input>
             <br />
+
+            <p>Where is your base located?</p>
+            <label htmlFor="x_coordinate">X</label>
+            <input type="number" id="x_coordinate" name="x_coordinate" onChange={handleChange}></input>
+            <label htmlFor="z_coordinate">Z</label>
+            <input type="number" id="z_coordinate" name="z_coordinate" onChange={handleChange}></input>
+            <br />
+
             <label htmlFor="base_description">Describe your base</label>
             <br />
             <textarea
@@ -84,16 +116,40 @@ function AddBase({ serverName, serverID }: Props) {
           <section>
             <div>Is your base for sale?</div>
             <label htmlFor="for_sale_yes">Yes</label>
-            <input type="radio" id="for_sale_yes" name="for_sale" value="true" onChange={handleChange}></input>
+            <input type="radio" id="for_sale_yes" name="for_sale" value={"true"} onChange={handleChange}></input>
             <label htmlFor="for_sale_no">No</label>
             <input
               type="radio"
               id="for_sale_no"
               name="for_sale"
-              value="false"
+              value={"false"}
               onChange={handleChange}
               defaultChecked
             ></input>
+            {formData.for_sale ? (
+              <div>
+                <br />
+                <label htmlFor="purchase_price">How much will your base cost?</label>
+                <br />
+                <input type="number" id="purchase_price" name="purchase_price" onChange={handleChange}></input>
+                <br />
+
+                <label htmlFor="purchase_item">What is the currency?</label>
+                <br />
+                <input type="text" id="purchase_item" name="purchase_item" onChange={handleChange}></input>
+                <br />
+
+                <label htmlFor="purchase_method">Enter your payment instructions</label>
+                <br />
+                <textarea
+                  className="base-method-input"
+                  id="purchase_method"
+                  name="purchase_method"
+                  onChange={handleChange}
+                ></textarea>
+                <br />
+              </div>
+            ) : null}
           </section>
           <section>
             <button type="submit">Upload base</button>

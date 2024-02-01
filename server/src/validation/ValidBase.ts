@@ -44,34 +44,34 @@ function validBase(base: Base): ValidationResult {
                     if (response.validRequest) {
                       // response is still valid so return it
                     } else {
-                      response.entryFeild = "purchase_method";
+                      response.invalidFeild = "purchase_method";
                     }
                   } else {
-                    response.entryFeild = "purchase_item";
+                    response.invalidFeild = "purchase_item";
                   }
                 } else {
-                  response.entryFeild = "purchase_price";
+                  response.invalidFeild = "purchase_price";
                 }
               } else {
-                response.entryFeild = "for_sale";
+                response.invalidFeild = "for_sale";
               }
             } else {
-              response.entryFeild = "z_coordinate";
+              response.invalidFeild = "z_coordinate";
             }
           } else {
-            response.entryFeild = "x_coordinate";
+            response.invalidFeild = "x_coordinate";
           }
         } else {
-          response.entryFeild = "base_description";
+          response.invalidFeild = "base_description";
         }
       } else {
-        response.entryFeild = "base_name";
+        response.invalidFeild = "base_name";
       }
     } else {
-      response.entryFeild = "owner_id";
+      response.invalidFeild = "owner_id";
     }
   } else {
-    response.entryFeild = "server_id";
+    response.invalidFeild = "server_id";
   }
   return response;
 }

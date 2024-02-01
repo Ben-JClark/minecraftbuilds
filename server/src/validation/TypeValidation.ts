@@ -1,7 +1,7 @@
 type ValidationResult = {
   validRequest: boolean;
   statusCode: number;
-  entryFeild?: string;
+  invalidFeild?: string;
   errorMessage?: string;
 };
 
