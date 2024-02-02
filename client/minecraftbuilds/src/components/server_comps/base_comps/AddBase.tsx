@@ -1,11 +1,14 @@
 import { FormEvent, ChangeEvent, useState } from "react";
 import ImageInput from "./ImageInput";
 import "../../../styling/AddBase.css";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 type baseFormData = {
   base_name: string;
   base_description: string;
+  x_coordinate: number;
+  z_coordinate: number;
   for_sale: boolean;
   purchase_price: number;
   purchase_item: string;
@@ -26,12 +29,15 @@ function AddBase({ serverName, serverID }: Props) {
   const [formData, setFormData] = useState<baseFormData>({
     base_name: "",
     base_description: "",
+    x_coordinate: -1,
+    z_coordinate: -1,
     for_sale: false,
     purchase_price: 0,
     purchase_item: "",
     purchase_method: "",
   });
   const [images, setImages] = useState<BaseImage[]>([]);
+  const navigate = useNavigate();
 
   console.log("Images:", images);
   console.log("formData:", formData);
@@ -62,6 +68,15 @@ function AddBase({ serverName, serverID }: Props) {
     console.log(formData);
   }
 
+  function handleIntChange(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.value !== undefined) {
+      setFormData({
+        ...formData,
+        [e.target.name]: parseInt(e.target.value),
+      });
+    }
+  }
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault(); // Prevents the default form from submitting
     let response;
@@ -71,6 +86,14 @@ function AddBase({ serverName, serverID }: Props) {
           "Content-Type": "application/json",
         },
       });
+      // No error = success, redirect to the base list
+      console.log(response);
+      if (response.request.status == 201) {
+        console.log("Success");
+        navigate(`/server/${serverName}/${serverID}/bases`);
+      } else {
+        console.log("error");
+      }
     } catch (error: any) {
       if (error.response) {
         console.log("Error posting base to server: ", error.response.data);
@@ -96,9 +119,9 @@ function AddBase({ serverName, serverID }: Props) {
 
             <p>Where is your base located?</p>
             <label htmlFor="x_coordinate">X</label>
-            <input type="number" id="x_coordinate" name="x_coordinate" onChange={handleChange}></input>
+            <input type="number" id="x_coordinate" name="x_coordinate" onChange={handleIntChange}></input>
             <label htmlFor="z_coordinate">Z</label>
-            <input type="number" id="z_coordinate" name="z_coordinate" onChange={handleChange}></input>
+            <input type="number" id="z_coordinate" name="z_coordinate" onChange={handleIntChange}></input>
             <br />
 
             <label htmlFor="base_description">Describe your base</label>
@@ -131,7 +154,7 @@ function AddBase({ serverName, serverID }: Props) {
                 <br />
                 <label htmlFor="purchase_price">How much will your base cost?</label>
                 <br />
-                <input type="number" id="purchase_price" name="purchase_price" onChange={handleChange}></input>
+                <input type="number" id="purchase_price" name="purchase_price" onChange={handleIntChange}></input>
                 <br />
 
                 <label htmlFor="purchase_item">What is the currency?</label>

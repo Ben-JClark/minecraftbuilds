@@ -94,7 +94,7 @@ async function addBase(base: Base): Promise<ValidationResult> {
   let connection;
   try {
     connection = await pool.getConnection();
-    const [response] = await connection.query("CALL add_base(?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+    const [response]: any = await connection.query("CALL add_base(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
       base.server_id,
       base.owner_id,
       base.base_name,
@@ -106,13 +106,12 @@ async function addBase(base: Base): Promise<ValidationResult> {
       base.purchase_item,
       base.purchase_method,
     ]);
-    if (Array.isArray(response)) {
-      //const rowsAffected = response[0]; // TODO get the number of rows affected, if 1, then success
-      //console.log(rowsAffected);
+    console.log("MySQL post response: ", response);
+    if (response.affectedRows !== undefined && response.affectedRows > 0) {
       baseValidation.statusCode = 201;
       return baseValidation;
     } else {
-      console.log("Error: Response from sql was not in array format");
+      console.log("Error: couldn't get reponse from mysql");
       baseValidation.validRequest = false;
       baseValidation.statusCode = 500;
       baseValidation.errorMessage = "Couldn't verify if the base was uploaded";
