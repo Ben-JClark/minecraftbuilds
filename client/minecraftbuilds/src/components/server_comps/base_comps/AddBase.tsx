@@ -1,8 +1,19 @@
 import { FormEvent, ChangeEvent, useState } from "react";
 import ImageInput from "./ImageInput";
 import "../../../styling/AddBase.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+
+enum MessageType {
+  Success,
+  Warning,
+  Error,
+}
+
+type Message = {
+  text: string;
+  type: MessageType;
+};
 
 type baseFormData = {
   base_name: string;
@@ -38,6 +49,7 @@ function AddBase({ serverName, serverID }: Props) {
   });
   const [images, setImages] = useState<BaseImage[]>([]);
   const navigate = useNavigate();
+  const [message, setMessage] = useState<Message | null>(null);
 
   console.log("Images:", images);
   console.log("formData:", formData);
@@ -89,14 +101,17 @@ function AddBase({ serverName, serverID }: Props) {
       // No error = success, redirect to the base list
       console.log(response);
       if (response.request.status == 201) {
-        console.log("Success");
-        navigate(`/server/${serverName}/${serverID}/bases`);
+        const newMessage = { text: "Successfully added your base!", type: MessageType.Success };
+        setMessage(newMessage);
+        //navigate(`/server/${serverName}/${serverID}/bases`);
       } else {
         console.log("error");
       }
     } catch (error: any) {
       if (error.response) {
         console.log("Error posting base to server: ", error.response.data);
+        const newMessage = { text: error.response.data.errorMessage, type: MessageType.Error };
+        setMessage(newMessage);
       } else {
         console.log("General Error posting base to server: ", error.message);
       }
@@ -110,74 +125,83 @@ function AddBase({ serverName, serverID }: Props) {
         <h1>Add your base to {serverName}</h1>
       </div>
       <div className="content">
-        <form onSubmit={handleSubmit}>
-          <section>
-            <label htmlFor="base_name">Give your base a name</label>
-            <br />
-            <input type="text" id="base_name" name="base_name" onChange={handleChange}></input>
-            <br />
+        {/* Display any messages from the server */}
+        {message !== null ? <div>{message.text}</div> : null}
+        {/* Display form if not successfully submitted*/}
+        {message === null || message.type !== MessageType.Success ? (
+          <form onSubmit={handleSubmit}>
+            <section>
+              <label htmlFor="base_name">Give your base a name</label>
+              <br />
+              <input type="text" id="base_name" name="base_name" onChange={handleChange}></input>
+              <br />
 
-            <p>Where is your base located?</p>
-            <label htmlFor="x_coordinate">X</label>
-            <input type="number" id="x_coordinate" name="x_coordinate" onChange={handleIntChange}></input>
-            <label htmlFor="z_coordinate">Z</label>
-            <input type="number" id="z_coordinate" name="z_coordinate" onChange={handleIntChange}></input>
-            <br />
+              <p>Where is your base located?</p>
+              <label htmlFor="x_coordinate">X</label>
+              <input type="number" id="x_coordinate" name="x_coordinate" onChange={handleIntChange}></input>
+              <label htmlFor="z_coordinate">Z</label>
+              <input type="number" id="z_coordinate" name="z_coordinate" onChange={handleIntChange}></input>
+              <br />
 
-            <label htmlFor="base_description">Describe your base</label>
-            <br />
-            <textarea
-              className="base-descr-input"
-              id="base_description"
-              name="base_description"
-              onChange={handleChange}
-            ></textarea>
-          </section>
-          <section>
-            <ImageInput setImageURLs={setImages} imageURLs={images} />
-          </section>
-          <section>
-            <div>Is your base for sale?</div>
-            <label htmlFor="for_sale_yes">Yes</label>
-            <input type="radio" id="for_sale_yes" name="for_sale" value={"true"} onChange={handleChange}></input>
-            <label htmlFor="for_sale_no">No</label>
-            <input
-              type="radio"
-              id="for_sale_no"
-              name="for_sale"
-              value={"false"}
-              onChange={handleChange}
-              defaultChecked
-            ></input>
-            {formData.for_sale ? (
-              <div>
-                <br />
-                <label htmlFor="purchase_price">How much will your base cost?</label>
-                <br />
-                <input type="number" id="purchase_price" name="purchase_price" onChange={handleIntChange}></input>
-                <br />
+              <label htmlFor="base_description">Describe your base</label>
+              <br />
+              <textarea
+                className="base-descr-input"
+                id="base_description"
+                name="base_description"
+                onChange={handleChange}
+              ></textarea>
+            </section>
+            <section>
+              <ImageInput setImageURLs={setImages} imageURLs={images} />
+            </section>
+            <section>
+              <div>Is your base for sale?</div>
+              <label htmlFor="for_sale_yes">Yes</label>
+              <input type="radio" id="for_sale_yes" name="for_sale" value={"true"} onChange={handleChange}></input>
+              <label htmlFor="for_sale_no">No</label>
+              <input
+                type="radio"
+                id="for_sale_no"
+                name="for_sale"
+                value={"false"}
+                onChange={handleChange}
+                defaultChecked
+              ></input>
+              {formData.for_sale ? (
+                <div>
+                  <br />
+                  <label htmlFor="purchase_price">How much will your base cost?</label>
+                  <br />
+                  <input type="number" id="purchase_price" name="purchase_price" onChange={handleIntChange}></input>
+                  <br />
 
-                <label htmlFor="purchase_item">What is the currency?</label>
-                <br />
-                <input type="text" id="purchase_item" name="purchase_item" onChange={handleChange}></input>
-                <br />
+                  <label htmlFor="purchase_item">What is the currency?</label>
+                  <br />
+                  <input type="text" id="purchase_item" name="purchase_item" onChange={handleChange}></input>
+                  <br />
 
-                <label htmlFor="purchase_method">Enter your payment instructions</label>
-                <br />
-                <textarea
-                  className="base-method-input"
-                  id="purchase_method"
-                  name="purchase_method"
-                  onChange={handleChange}
-                ></textarea>
-                <br />
-              </div>
-            ) : null}
-          </section>
-          <section>
-            <button type="submit">Upload base</button>
-          </section>
-        </form>
+                  <label htmlFor="purchase_method">Enter your payment instructions</label>
+                  <br />
+                  <textarea
+                    className="base-method-input"
+                    id="purchase_method"
+                    name="purchase_method"
+                    onChange={handleChange}
+                  ></textarea>
+                  <br />
+                </div>
+              ) : null}
+            </section>
+            <section>
+              <button type="submit">Upload base</button>
+            </section>
+          </form>
+        ) : (
+          <p>
+            Navigate back to the <Link to={`/server/${serverName}/${serverID}/bases`}>Bases Page</Link>
+          </p>
+        )}
       </div>
     </>
   );
