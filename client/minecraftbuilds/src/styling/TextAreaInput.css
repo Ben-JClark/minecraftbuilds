@@ -1,0 +1,14 @@
+/* Mobile */
+@media (max-width: 640px) {
+  .text-area-input textarea {
+    width: 80%;
+    height: 15em;
+  }
+}
+/* Laptop / Tablet */
+@media (min-width: 641px) {
+  .text-area-input textarea {
+    width: 70%;
+    height: 15em;
+  }
+}

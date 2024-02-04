@@ -4,7 +4,6 @@ import TextInput from "./TextInput";
 import NumberInput from "./NumberInput";
 import TextAreaInput from "./TextAreaInput";
 import RadioInput from "./RadioInput";
-import "../../../styling/AddBase.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 

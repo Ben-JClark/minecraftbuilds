@@ -1,4 +1,5 @@
 import { ChangeEvent } from "react";
+import "../../../styling/TextAreaInput.css";
 
 interface Props {
   label: string;
