@@ -1,4 +1,4 @@
-import { FormEvent, ChangeEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import ImageInput from "./ImageInput";
 import TextInput from "./TextInput";
 import NumberInput from "./NumberInput";
@@ -28,11 +28,7 @@ type baseFormData = {
   purchase_price: number;
   purchase_item: string;
   purchase_method: string;
-};
-
-type BaseImage = {
-  objectUrl: string;
-  filename: string | null;
+  image_files: File[];
 };
 
 interface Props {
@@ -50,17 +46,16 @@ function AddBase({ serverName, serverID }: Props) {
     purchase_price: 0,
     purchase_item: "",
     purchase_method: "",
+    image_files: [],
   });
-  const [images, setImages] = useState<BaseImage[]>([]);
   const [message, setMessage] = useState<Message | null>(null);
 
-  console.log("Images:", images);
   console.log("formData:", formData);
 
   /**
    * Update the formdata to contain the value entered in the input
    */
-  function handleChange(formFeild: string, value: string | number | boolean) {
+  function handleChange(formFeild: string, value: string | number | boolean | File[]) {
     setFormData({
       ...formData,
       [formFeild]: value,
@@ -77,7 +72,7 @@ function AddBase({ serverName, serverID }: Props) {
         },
       });
       // No error = success, redirect to the base list
-      if (response.request.status == 201) {
+      if (response.request.status === 201) {
         const newMessage: Message = { text: "Successfully added your base!", type: MessageType.Success, element: null };
         setMessage(newMessage);
       } else {
@@ -152,7 +147,14 @@ function AddBase({ serverName, serverID }: Props) {
               />
             </section>
             <section>
-              <ImageInput setImageURLs={setImages} imageURLs={images} />
+              <ImageInput
+                label="Upload some screenshots of your base"
+                feild={"image_files"}
+                required={false}
+                max={5}
+                onChange={handleChange}
+                formImageFiles={formData.image_files}
+              />
             </section>
             <section>
               <div>Is your base for sale?</div>
@@ -218,4 +220,3 @@ function AddBase({ serverName, serverID }: Props) {
 }
 
 export default AddBase;
-export type { BaseImage };

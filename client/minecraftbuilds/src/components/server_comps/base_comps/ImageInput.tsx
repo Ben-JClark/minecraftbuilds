@@ -1,35 +1,48 @@
 import { ChangeEvent, useState } from "react";
 import "../../../styling/ImageInput.css";
-import type { BaseImage } from "./AddBase";
+
+type Image = {
+  url: string;
+  filename: string;
+};
 
 interface Props {
-  setImageURLs: (imageURL: BaseImage[]) => void;
-  imageURLs: BaseImage[];
+  label: string;
+  feild: string;
+  required: boolean;
+  max: number;
+  onChange: (formFeild: string, value: File[]) => void;
+  formImageFiles: File[];
 }
 
-function ImageInput({ setImageURLs, imageURLs }: Props) {
+function ImageInput({ label, feild, required, max, onChange, formImageFiles }: Props) {
+  const [images, setImages] = useState<Image[]>([]);
+
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
-      const newImages: BaseImage[] = [];
+      const newImages: Image[] = []; // newImages stores the images for display
+      const newFormImageFiles: File[] = []; // newFormImages is the image urls stored in the form
 
       for (let i = 0; i < e.target.files.length; i++) {
-        newImages.push({ objectUrl: URL.createObjectURL(e.target.files[i]), filename: e.target.files[i].name });
+        newImages.push({ url: URL.createObjectURL(e.target.files[i]), filename: e.target.files[i].name });
+        newFormImageFiles.push(e.target.files[i]);
       }
 
-      setImageURLs([...imageURLs, ...newImages]);
+      setImages([...images, ...newImages]);
+      onChange(feild, [...formImageFiles, ...newFormImageFiles]);
     }
   }
 
   return (
     <>
-      <label htmlFor="image_paths">Upload a screenshots of your base</label>
+      <label htmlFor={feild}>{label}</label>
       <br />
-      <input type="file" id="image_paths" name="image_paths" onChange={handleChange}></input>
+      <input type="file" id={feild} name={feild} onChange={handleChange}></input>
       <div className="image-preview-container">
-        {imageURLs.map((baseImage: BaseImage) => (
-          <div key={baseImage.objectUrl}>
-            <img className="image-preview" src={baseImage.objectUrl} alt="Base Preview"></img>
-            <p className="image-preview-url">{baseImage.filename}</p>
+        {images.map((image: Image) => (
+          <div key={image.url}>
+            <img className="image-preview" src={image.url} alt={image.filename}></img>
+            <p className="image-preview-url">{image.filename}</p>
           </div>
         ))}
       </div>

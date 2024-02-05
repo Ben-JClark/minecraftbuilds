@@ -19,6 +19,7 @@ type Base = {
   purchase_price: any;
   purchase_item: any;
   purchase_method: any;
+  image_files: any;
 };
 
 function validBase(base: Base): ValidationResult {
