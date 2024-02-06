@@ -66,9 +66,25 @@ function AddBase({ serverName, serverID }: Props) {
     e.preventDefault();
     let response;
     try {
-      response = await axios.post(`http://localhost:5000/server/${serverName}/${serverID}/bases`, formData, {
+      let bodyFormData = new FormData();
+
+      // Append form feilds except for the images array
+      for (let [key, value] of Object.entries(formData)) {
+        if (key !== "image_files") {
+          bodyFormData.append(key, value.toString());
+        }
+      }
+
+      // Append the form images
+      formData.image_files.forEach((file: File, index: number) => {
+        bodyFormData.append(`image_files`, file);
+      });
+
+      console.log("bodyFormData: ", bodyFormData);
+
+      response = await axios.post(`http://localhost:5000/server/${serverName}/${serverID}/bases`, bodyFormData, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
       // No error = success, redirect to the base list

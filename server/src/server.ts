@@ -7,7 +7,19 @@ import type { Base } from "./validation/ValidBase.js";
 import type { ValidationResult } from "./validation/TypeValidation.js";
 
 // app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// app.use(express.json());
+
+import multer from "multer";
+
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const uploadPath = path.resolve(__dirname, "../uploads/bases/");
+const baseUploads = multer({ dest: uploadPath });
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -46,14 +58,20 @@ app.get("/server/:serverName/:serverID/bases", async (req: Request, res: Respons
   }
 });
 
-app.post("/server/:serverName/:serverID/bases", async (req: Request, res: Response) => {
-  const base = req.body as Base;
-  base.server_id = parseInt(req.params.serverID);
-  base.owner_id = 1;
+app.post(
+  "/server/:serverName/:serverID/bases",
+  baseUploads.array("image_files", 5),
+  async (req: Request, res: Response) => {
+    console.log("uploaded files: ", req.files);
+    console.log("req.body: ", req.body);
+    const base = req.body as Base;
+    base.server_id = parseInt(req.params.serverID);
+    base.owner_id = 1;
 
-  console.log("base: ", base);
-  const response: ValidationResult = await addBase(base);
-  res.status(response.statusCode).json(response);
-});
+    console.log("base: ", base);
+    const response: ValidationResult = await addBase(base);
+    res.status(response.statusCode).json(response);
+  }
+);
 
 app.listen(5000);
