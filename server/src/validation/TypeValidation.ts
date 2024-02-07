@@ -175,5 +175,37 @@ function validBoolean(input: any) {
   return response;
 }
 
-export { validVarchar, validSignedInt, validUnsignedInt, validBoolean };
+function validFiles(input: any, min: number, max: number) {
+  let response: ValidationResult = {
+    validRequest: false,
+    statusCode: 500,
+  };
+
+  if (input !== undefined) {
+    if (input !== null) {
+      if (input.length >= min) {
+        if (input.length <= max) {
+          response.validRequest = true;
+        } else {
+          response.errorMessage = `You can't upload more than ${max} ${max > 0 ? "files" : "file"} `;
+        }
+      } else {
+        response.errorMessage = `You must at lest upload ${min} ${min > 0 ? "files" : "file"} `;
+      }
+    } else {
+      response.errorMessage = "The files can't be null";
+    }
+  } else {
+    response.errorMessage = "The files cannot be undefined";
+  }
+
+  // invalid input = 400 Bad Request
+  if (response.validRequest === false) {
+    response.statusCode = 400;
+  }
+
+  return response;
+}
+
+export { validVarchar, validSignedInt, validUnsignedInt, validBoolean, validFiles };
 export type { ValidationResult };

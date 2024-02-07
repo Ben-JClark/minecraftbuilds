@@ -5,21 +5,22 @@ import {
   validSignedInt,
   validUnsignedInt,
   validBoolean,
+  validFiles,
 } from "./TypeValidation.js";
 import type { ValidationResult } from "./TypeValidation.js";
 
 type Base = {
-  server_id: any;
-  owner_id: any;
-  base_name: any;
-  base_description: any;
-  x_coordinate: any;
-  z_coordinate: any;
-  for_sale: any;
-  purchase_price: any;
-  purchase_item: any;
-  purchase_method: any;
-  image_files: any;
+  server_id: number;
+  owner_id: number;
+  base_name: string;
+  base_description: string;
+  x_coordinate: number;
+  z_coordinate: number;
+  for_sale: boolean;
+  purchase_price: number;
+  purchase_item: string;
+  purchase_method: string;
+  image_files: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined;
 };
 
 function validBase(base: Base): ValidationResult {
@@ -43,7 +44,12 @@ function validBase(base: Base): ValidationResult {
                   if (response.validRequest) {
                     response = validVarchar(base.purchase_method, 0, 255);
                     if (response.validRequest) {
-                      // response is still valid so return it
+                      response = validFiles(base.image_files, 1, 5);
+                      if (response.validRequest) {
+                        // response is already valid
+                      } else {
+                        response.invalidFeild = "image_files";
+                      }
                     } else {
                       response.invalidFeild = "purchase_method";
                     }

@@ -83,7 +83,7 @@ async function getBases(serverID: number) {
  * This query does not add any images
  * @returns null if there is an error, false if mysql couldn't add the base, true if the base was added
  */
-async function addBase(base: Base): Promise<ValidationResult> {
+async function addBase(base: Base, imageDir: string): Promise<ValidationResult> {
   // validate the base passed
   const baseValidation: ValidationResult = validBase(base);
   if (baseValidation.validRequest !== true) {
@@ -94,7 +94,7 @@ async function addBase(base: Base): Promise<ValidationResult> {
   let connection;
   try {
     connection = await pool.getConnection();
-    const [response]: any = await connection.query("CALL add_base(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+    const [response]: any = await connection.query("CALL add_base(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
       base.server_id,
       base.owner_id,
       base.base_name,
@@ -105,18 +105,26 @@ async function addBase(base: Base): Promise<ValidationResult> {
       base.purchase_price,
       base.purchase_item,
       base.purchase_method,
+      base.image_files?.length,
     ]);
     console.log("MySQL post response: ", response);
-    if (response.affectedRows !== undefined && response.affectedRows > 0) {
-      baseValidation.statusCode = 201;
-      return baseValidation;
-    } else {
-      console.log("Error: couldn't get reponse from mysql");
-      baseValidation.validRequest = false;
-      baseValidation.statusCode = 500;
-      baseValidation.errorMessage = "Couldn't verify if the base was uploaded";
-      return baseValidation;
-    }
+    // rename the saved files with the new image name
+
+    // TODO: FINISH THIS: renameImages( /* GET NAMES FROM base.image_files  */ , /* GET NEW NAMES FROM response  */ , imageDir);
+
+    baseValidation.statusCode = 201;
+    return baseValidation;
+    // console.log("MySQL post response: ", response);
+    // if (response.affectedRows !== undefined && response.affectedRows > 0) {
+    //   baseValidation.statusCode = 201;
+    //   return baseValidation;
+    // } else {
+    //   console.log("Error: couldn't get reponse from mysql");
+    //   baseValidation.validRequest = false;
+    //   baseValidation.statusCode = 500;
+    //   baseValidation.errorMessage = "Couldn't verify if the base was uploaded";
+    //   return baseValidation;
+    // }
   } catch (error) {
     console.log("Error getting the list of bases: ", error);
     baseValidation.validRequest = false;
@@ -128,6 +136,10 @@ async function addBase(base: Base): Promise<ValidationResult> {
       connection.release();
     }
   }
+}
+
+function renameImages(curNames: string[], newNames: string[], imageDir: string): boolean {
+  return false;
 }
 
 export { getServers, getLongDescription, getBases, addBase };

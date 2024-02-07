@@ -18,8 +18,8 @@ import path from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const uploadPath = path.resolve(__dirname, "../uploads/bases/");
-const baseUploads = multer({ dest: uploadPath });
+const baseImagePath = path.resolve(__dirname, "../uploads/bases/");
+const baseUploads = multer({ dest: baseImagePath });
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -62,14 +62,22 @@ app.post(
   "/server/:serverName/:serverID/bases",
   baseUploads.array("image_files", 5),
   async (req: Request, res: Response) => {
-    console.log("uploaded files: ", req.files);
-    console.log("req.body: ", req.body);
-    const base = req.body as Base;
-    base.server_id = parseInt(req.params.serverID);
-    base.owner_id = 1;
+    const base: Base = {
+      server_id: parseInt(req.params.serverID),
+      owner_id: 1,
+      base_name: req.body.base_name,
+      base_description: req.body.base_description,
+      x_coordinate: parseInt(req.body.x_coordinate),
+      z_coordinate: parseInt(req.body.z_coordinate),
+      for_sale: String(req.body.for_sale).toLocaleLowerCase() === "true",
+      purchase_price: parseInt(req.body.purchase_price),
+      purchase_item: req.body.purchase_item,
+      purchase_method: req.body.purchase_method,
+      image_files: req.files,
+    };
 
     console.log("base: ", base);
-    const response: ValidationResult = await addBase(base);
+    const response: ValidationResult = await addBase(base, baseImagePath);
     res.status(response.statusCode).json(response);
   }
 );
