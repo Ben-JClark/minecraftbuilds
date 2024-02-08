@@ -84,7 +84,7 @@ async function getBases(serverID: number) {
  * This query does not add any images
  * @returns null if there is an error, false if mysql couldn't add the base, true if the base was added
  */
-async function addBase(base: Base, folder: "bases" | "shops" | "farms"): Promise<ValidationResult> {
+async function addBase(base: Base): Promise<ValidationResult> {
   // validate the base passed
   let response: ValidationResult = validBase(base);
   if (response.validRequest !== true) {
@@ -114,7 +114,7 @@ async function addBase(base: Base, folder: "bases" | "shops" | "farms"): Promise
       return String(obj.image_name);
     });
     // Rename the images
-    response = await renameImages(base.image_files, newNames, "bases");
+    response = await renameImages(base.image_files, newNames, "base");
     if (response.validRequest) {
       response.statusCode = 201;
     }

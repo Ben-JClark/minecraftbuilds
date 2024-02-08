@@ -19,7 +19,11 @@ function BaseListing({ base }: Props) {
       <div className="b-sale">
         <p>{base.forSale ? `For Sale. ${base.purchasePrice} ${base.purchaseItem}` : null}</p>
       </div>
-      <img src="/test-image.png" alt={base.baseName} className="b-image"></img>
+      <img
+        src={`http://localhost:5000/base-${String(base.mainImageName)}.png`}
+        alt={base.baseName}
+        className="b-image"
+      ></img>
       <div className="b-tags">
         <p>
           Listed by {base.ownerName} {timeSince(base.listedDate)} ago

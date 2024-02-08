@@ -11,7 +11,7 @@ interface Props {
 type BasePreview = {
   baseId: number;
   baseName: string;
-  mainImageName: string;
+  mainImageName: string | number;
   ownerId: number;
   ownerName: string;
   listedDate: Date;

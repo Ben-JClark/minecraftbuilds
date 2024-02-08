@@ -8,8 +8,8 @@ import type { ValidationResult } from "../validation/TypeValidation.js";
 import multer from "multer";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const baseImagePath = path.resolve(__dirname, "../../uploads/bases/");
-const baseMulterInstance = multer({ dest: baseImagePath });
+const imagePath = path.resolve(__dirname, "../uploads/");
+const multerInstance = multer({ dest: imagePath });
 
 /**
  * Renames a set of images to the set of filenames in the specified foler
@@ -21,7 +21,7 @@ const baseMulterInstance = multer({ dest: baseImagePath });
 async function renameImages(
   currNames: string[],
   newNames: string[],
-  folder: "bases" | "shops" | "farms"
+  imageFor: "base" | "shop" | "farm"
 ): Promise<ValidationResult> {
   let response: ValidationResult = {
     validRequest: false,
@@ -31,8 +31,8 @@ async function renameImages(
   if (currNames.length === newNames.length) {
     try {
       const renamePromises = currNames.map(async (currName: string, i: number) => {
-        const currPath = path.resolve(__dirname, `../../uploads/${folder}/${currName}`);
-        const newPath = path.resolve(__dirname, `../../uploads/${folder}/${newNames[i]}`);
+        const currPath = path.resolve(__dirname, `../uploads/${currName}`);
+        const newPath = path.resolve(__dirname, `../uploads/${imageFor}-${newNames[i]}.png`);
         console.log();
         return rename(currPath, newPath);
       });
@@ -51,4 +51,4 @@ async function renameImages(
   return response;
 }
 
-export { baseMulterInstance, renameImages };
+export { multerInstance, path, __dirname, renameImages };
