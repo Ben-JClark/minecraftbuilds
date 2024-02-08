@@ -5,7 +5,7 @@ import {
   validSignedInt,
   validUnsignedInt,
   validBoolean,
-  validFiles,
+  validFileNames,
 } from "./TypeValidation.js";
 import type { ValidationResult } from "./TypeValidation.js";
 
@@ -44,7 +44,7 @@ function validBase(base: Base): ValidationResult {
                   if (response.validRequest) {
                     response = validVarchar(base.purchase_method, 0, 255);
                     if (response.validRequest) {
-                      response = validFiles(base.image_files, 1, 5);
+                      response = validFileNames(base.image_files, 1, 5);
                       if (response.validRequest) {
                         // response is already valid
                       } else {

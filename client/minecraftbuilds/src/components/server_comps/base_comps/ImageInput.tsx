@@ -13,9 +13,10 @@ interface Props {
   max: number;
   onChange: (formFeild: string, value: File[]) => void;
   formImageFiles: File[];
+  error: string | null;
 }
 
-function ImageInput({ label, feild, required, max, onChange, formImageFiles }: Props) {
+function ImageInput({ label, feild, required, max, onChange, formImageFiles, error }: Props) {
   const [images, setImages] = useState<Image[]>([]);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -46,6 +47,7 @@ function ImageInput({ label, feild, required, max, onChange, formImageFiles }: P
           </div>
         ))}
       </div>
+      <div className="input-error">{error}</div>
     </>
   );
 }

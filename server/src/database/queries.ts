@@ -1,6 +1,7 @@
 import { pool } from "./pool.js";
 import type { Base } from "../validation/ValidBase.js";
 import { validBase } from "../validation/ValidBase.js";
+import { renameImages } from "../fileOperations/localOperations.js";
 import type { ValidationResult } from "../validation/TypeValidation.js";
 
 /**
@@ -83,7 +84,7 @@ async function getBases(serverID: number) {
  * This query does not add any images
  * @returns null if there is an error, false if mysql couldn't add the base, true if the base was added
  */
-async function addBase(base: Base, imageDir: string): Promise<ValidationResult> {
+async function addBase(base: Base, folder: "bases" | "shops" | "farms"): Promise<ValidationResult> {
   // validate the base passed
   let response: ValidationResult = validBase(base);
   if (response.validRequest !== true) {
@@ -126,44 +127,6 @@ async function addBase(base: Base, imageDir: string): Promise<ValidationResult> 
     }
     return response;
   }
-}
-
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-import path from "path";
-import { rename } from "fs/promises";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-async function renameImages(
-  currNames: string[],
-  newNames: string[],
-  folder: "bases" | "shops" | "farms"
-): Promise<ValidationResult> {
-  let response: ValidationResult = {
-    validRequest: false,
-    statusCode: 500,
-  };
-
-  if (currNames.length === newNames.length) {
-    try {
-      const renamePromises = currNames.map(async (currName: string, i: number) => {
-        const currPath = path.resolve(__dirname, `../../uploads/${folder}/${currName}`);
-        const newPath = path.resolve(__dirname, `../../uploads/${folder}/${newNames[i]}`);
-        return rename(currPath, newPath);
-      });
-      await Promise.all(renamePromises);
-      // All files renamed successfully
-      response.validRequest = true;
-    } catch (error) {
-      response.errorMessage = "Error storing images";
-    }
-  } else {
-    response.errorMessage = "Error renaming stored images, filenames provided have unequal length";
-  }
-  console.log("response from queries.ts: ", response);
-  return response;
 }
 
 export { getServers, getLongDescription, getBases, addBase };

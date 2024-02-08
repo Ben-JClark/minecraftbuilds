@@ -40,12 +40,12 @@ function validVarchar(input: any, minLength: number, maxLength: number): Validat
           response.validRequest = true;
         } else {
           response.errorMessage = `Your input is too long! must enter less than ${maxLength} ${
-            maxLength > 0 ? "characters" : "character"
+            maxLength > 1 ? "characters" : "character"
           }.`;
         }
       } else {
         response.errorMessage = `Your input is too short! You must enter more than ${minLength} ${
-          minLength > 0 ? "characters" : "character"
+          minLength > 1 ? "characters" : "character"
         }.`;
       }
     } else {
@@ -175,7 +175,14 @@ function validBoolean(input: any) {
   return response;
 }
 
-function validFiles(input: any, min: number, max: number) {
+/**
+ * Checks if the input is a string array and the length is within the range
+ * @param input the file names
+ * @param min the minimum number of file names
+ * @param max the maximum number of file names
+ * @returns
+ */
+function validFileNames(input: any, min: number, max: number) {
   let response: ValidationResult = {
     validRequest: false,
     statusCode: 500,
@@ -183,14 +190,22 @@ function validFiles(input: any, min: number, max: number) {
 
   if (input !== undefined) {
     if (input !== null) {
-      if (input.length >= min) {
-        if (input.length <= max) {
-          response.validRequest = true;
+      if (Array.isArray(input)) {
+        if (input.length >= min) {
+          if (input.length <= max) {
+            if (input.every((filename) => typeof filename === "string")) {
+              response.validRequest = true;
+            } else {
+              response.errorMessage = "The file names are not all a string";
+            }
+          } else {
+            response.errorMessage = `You can't upload more than ${max} ${max > 1 ? "files" : "file"} `;
+          }
         } else {
-          response.errorMessage = `You can't upload more than ${max} ${max > 0 ? "files" : "file"} `;
+          response.errorMessage = `You must at lest upload ${min} ${min > 1 ? "files" : "file"} `;
         }
       } else {
-        response.errorMessage = `You must at lest upload ${min} ${min > 0 ? "files" : "file"} `;
+        response.errorMessage = "The files are not an array";
       }
     } else {
       response.errorMessage = "The files can't be null";
@@ -207,5 +222,5 @@ function validFiles(input: any, min: number, max: number) {
   return response;
 }
 
-export { validVarchar, validSignedInt, validUnsignedInt, validBoolean, validFiles };
+export { validVarchar, validSignedInt, validUnsignedInt, validBoolean, validFileNames };
 export type { ValidationResult };

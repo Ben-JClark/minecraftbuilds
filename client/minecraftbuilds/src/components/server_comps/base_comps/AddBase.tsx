@@ -124,111 +124,118 @@ function AddBase({ serverName, serverID }: Props) {
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
-            <section>
-              <TextInput
-                label="Give your base a name"
-                feild="base_name"
-                max={32}
-                required={true}
-                onChange={handleChange}
-                error={message?.element === "base_name" ? message.text : null}
-              />
-              <p>Where is your base located?</p>
-              <NumberInput
-                label="X"
-                feild="x_coordinate"
-                required={false}
-                max={8388607}
-                min={-8388607}
-                onChange={handleChange}
-                error={message?.element === "x_coordinate" ? message.text : null}
-              />
-              <NumberInput
-                label="Z"
-                feild="z_coordinate"
-                required={false}
-                max={8388607}
-                min={-8388607}
-                onChange={handleChange}
-                error={message?.element === "z_coordinate" ? message.text : null}
-              />
-              <TextAreaInput
-                label="Describe your base"
-                feild="base_description"
-                max={1000}
-                required={false}
-                onChange={handleChange}
-                error={message?.element === "base_description" ? message.text : null}
-              />
-            </section>
-            <section>
-              <ImageInput
-                label="Upload some screenshots of your base"
-                feild={"image_files"}
-                required={false}
-                max={5}
-                onChange={handleChange}
-                formImageFiles={formData.image_files}
-              />
-            </section>
-            <section>
-              <div>Is your base for sale?</div>
+          <>
+            {/* Display any general errors (errors not addressed to any element) */}
+            <div className="server-error">
+              {message?.type === MessageType.Error && message?.element === undefined ? message.text : null}
+            </div>
+            <form onSubmit={handleSubmit}>
+              <section>
+                <TextInput
+                  label="Give your base a name"
+                  feild="base_name"
+                  max={32}
+                  required={true}
+                  onChange={handleChange}
+                  error={message?.element === "base_name" ? message.text : null}
+                />
+                <p>Where is your base located?</p>
+                <NumberInput
+                  label="X"
+                  feild="x_coordinate"
+                  required={false}
+                  max={8388607}
+                  min={-8388607}
+                  onChange={handleChange}
+                  error={message?.element === "x_coordinate" ? message.text : null}
+                />
+                <NumberInput
+                  label="Z"
+                  feild="z_coordinate"
+                  required={false}
+                  max={8388607}
+                  min={-8388607}
+                  onChange={handleChange}
+                  error={message?.element === "z_coordinate" ? message.text : null}
+                />
+                <TextAreaInput
+                  label="Describe your base"
+                  feild="base_description"
+                  max={1000}
+                  required={false}
+                  onChange={handleChange}
+                  error={message?.element === "base_description" ? message.text : null}
+                />
+              </section>
+              <section>
+                <ImageInput
+                  label="Upload some screenshots of your base"
+                  feild={"image_files"}
+                  required={false}
+                  max={5}
+                  onChange={handleChange}
+                  formImageFiles={formData.image_files}
+                  error={message?.element === "image_files" ? message.text : null}
+                />
+              </section>
+              <section>
+                <div>Is your base for sale?</div>
 
-              <RadioInput
-                label="Yes"
-                name="for_sale"
-                feild="for_sale_yes"
-                value={true}
-                isChecked={formData.for_sale ? true : false}
-                onChange={handleChange}
-              />
-              <RadioInput
-                label="No"
-                name="for_sale"
-                feild="for_sale_no"
-                value={false}
-                isChecked={formData.for_sale ? false : true}
-                onChange={handleChange}
-              />
-              <div className="input-error">{message?.element === "for_sale" ? message.text : null}</div>
+                <RadioInput
+                  label="Yes"
+                  name="for_sale"
+                  feild="for_sale_yes"
+                  value={true}
+                  isChecked={formData.for_sale ? true : false}
+                  onChange={handleChange}
+                />
+                <RadioInput
+                  label="No"
+                  name="for_sale"
+                  feild="for_sale_no"
+                  value={false}
+                  isChecked={formData.for_sale ? false : true}
+                  onChange={handleChange}
+                />
+                <div className="input-error">{message?.element === "for_sale" ? message.text : null}</div>
 
-              {formData.for_sale ? (
-                <>
-                  <NumberInput
-                    label="How much will your base cost?"
-                    feild="purchase_price"
-                    required={false}
-                    max={65535}
-                    min={0}
-                    onChange={handleChange}
-                    error={message?.element === "purchase_price" ? message.text : null}
-                  />
+                {formData.for_sale ? (
+                  <>
+                    <NumberInput
+                      label="How much will your base cost?"
+                      feild="purchase_price"
+                      required={false}
+                      max={65535}
+                      min={0}
+                      onChange={handleChange}
+                      error={message?.element === "purchase_price" ? message.text : null}
+                    />
 
-                  <TextInput
-                    label="What is the currency?"
-                    feild="purchase_item"
-                    max={41}
-                    required={false}
-                    onChange={handleChange}
-                    error={message?.element === "purchase_item" ? message.text : null}
-                  />
+                    <TextInput
+                      label="What is the currency?"
+                      feild="purchase_item"
+                      max={41}
+                      required={false}
+                      onChange={handleChange}
+                      error={message?.element === "purchase_item" ? message.text : null}
+                    />
 
-                  <TextAreaInput
-                    label="Enter your payment instructions"
-                    feild="purchase_method"
-                    max={255}
-                    required={false}
-                    onChange={handleChange}
-                    error={message?.element === "purchase_method" ? message.text : null}
-                  />
-                </>
-              ) : null}
-            </section>
-            <section>
-              <button type="submit">Upload base</button>
-            </section>
-          </form>
+                    <TextAreaInput
+                      label="Enter your payment instructions"
+                      feild="purchase_method"
+                      max={255}
+                      required={false}
+                      onChange={handleChange}
+                      error={message?.element === "purchase_method" ? message.text : null}
+                    />
+                  </>
+                ) : null}
+              </section>
+              <section>
+                <button type="submit">Upload base</button>
+              </section>
+            </form>
+          </>
         )}
       </div>
     </>
