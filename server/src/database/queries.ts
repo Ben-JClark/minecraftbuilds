@@ -85,16 +85,16 @@ async function getBases(serverID: number) {
  */
 async function addBase(base: Base, imageDir: string): Promise<ValidationResult> {
   // validate the base passed
-  const baseValidation: ValidationResult = validBase(base);
-  if (baseValidation.validRequest !== true) {
-    console.log("Base is not valid: ", baseValidation);
-    return baseValidation;
+  let response: ValidationResult = validBase(base);
+  if (response.validRequest !== true) {
+    console.log("Base is not valid: ", response);
+    return response;
   }
 
   let connection;
   try {
     connection = await pool.getConnection();
-    const [response]: any = await connection.query("CALL add_base(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+    const [MySQLResponse]: any = await connection.query("CALL add_base(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
       base.server_id,
       base.owner_id,
       base.base_name,
@@ -105,41 +105,65 @@ async function addBase(base: Base, imageDir: string): Promise<ValidationResult> 
       base.purchase_price,
       base.purchase_item,
       base.purchase_method,
-      base.image_files?.length,
-    ]);
-    console.log("MySQL post response: ", response);
-    // rename the saved files with the new image name
+      base.image_files.length,
+    ]); // MySQL returns the names the images should be renamed to
 
-    // TODO: FINISH THIS: renameImages( /* GET NAMES FROM base.image_files  */ , /* GET NEW NAMES FROM response  */ , imageDir);
-
-    baseValidation.statusCode = 201;
-    return baseValidation;
-    // console.log("MySQL post response: ", response);
-    // if (response.affectedRows !== undefined && response.affectedRows > 0) {
-    //   baseValidation.statusCode = 201;
-    //   return baseValidation;
-    // } else {
-    //   console.log("Error: couldn't get reponse from mysql");
-    //   baseValidation.validRequest = false;
-    //   baseValidation.statusCode = 500;
-    //   baseValidation.errorMessage = "Couldn't verify if the base was uploaded";
-    //   return baseValidation;
-    // }
+    // Obtain the new names
+    const newNames: string[] = MySQLResponse[0].map((obj: any) => {
+      return String(obj.image_name);
+    });
+    // Rename the images
+    response = await renameImages(base.image_files, newNames, "bases");
+    if (response.validRequest) {
+      response.statusCode = 201;
+    }
   } catch (error) {
     console.log("Error getting the list of bases: ", error);
-    baseValidation.validRequest = false;
-    baseValidation.statusCode = 500;
-    baseValidation.errorMessage = "Could not upload the base to the database";
-    return baseValidation;
+    response.errorMessage = "Could not upload the base to the database";
   } finally {
     if (connection !== undefined) {
       connection.release();
     }
+    return response;
   }
 }
 
-function renameImages(curNames: string[], newNames: string[], imageDir: string): boolean {
-  return false;
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import path from "path";
+import { rename } from "fs/promises";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+async function renameImages(
+  currNames: string[],
+  newNames: string[],
+  folder: "bases" | "shops" | "farms"
+): Promise<ValidationResult> {
+  let response: ValidationResult = {
+    validRequest: false,
+    statusCode: 500,
+  };
+
+  if (currNames.length === newNames.length) {
+    try {
+      const renamePromises = currNames.map(async (currName: string, i: number) => {
+        const currPath = path.resolve(__dirname, `../../uploads/${folder}/${currName}`);
+        const newPath = path.resolve(__dirname, `../../uploads/${folder}/${newNames[i]}`);
+        return rename(currPath, newPath);
+      });
+      await Promise.all(renamePromises);
+      // All files renamed successfully
+      response.validRequest = true;
+    } catch (error) {
+      response.errorMessage = "Error storing images";
+    }
+  } else {
+    response.errorMessage = "Error renaming stored images, filenames provided have unequal length";
+  }
+  console.log("response from queries.ts: ", response);
+  return response;
 }
 
 export { getServers, getLongDescription, getBases, addBase };

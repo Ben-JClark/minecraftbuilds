@@ -62,6 +62,11 @@ app.post(
   "/server/:serverName/:serverID/bases",
   baseUploads.array("image_files", 5),
   async (req: Request, res: Response) => {
+    // Get the names of the files from the client
+    const fileNames: string[] = (req.files as Express.Multer.File[]).map((obj: any) => {
+      return obj.filename;
+    });
+
     const base: Base = {
       server_id: parseInt(req.params.serverID),
       owner_id: 1,
@@ -73,10 +78,9 @@ app.post(
       purchase_price: parseInt(req.body.purchase_price),
       purchase_item: req.body.purchase_item,
       purchase_method: req.body.purchase_method,
-      image_files: req.files,
+      image_files: fileNames,
     };
 
-    console.log("base: ", base);
     const response: ValidationResult = await addBase(base, baseImagePath);
     res.status(response.statusCode).json(response);
   }

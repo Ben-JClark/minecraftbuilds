@@ -20,7 +20,7 @@ type Base = {
   purchase_price: number;
   purchase_item: string;
   purchase_method: string;
-  image_files: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined;
+  image_files: string[]; // Names of the files
 };
 
 function validBase(base: Base): ValidationResult {
