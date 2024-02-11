@@ -3,13 +3,12 @@ import { ChangeEvent } from "react";
 interface Props {
   label: string;
   feild: string;
-  required: boolean;
-  max: number;
   onChange: (formFeild: string, value: string) => void;
-  error: string | null;
+  invalidMessage: string | null | undefined;
+  validMessage: string | null | undefined;
 }
 
-function TextInput({ label, feild, max, required, onChange, error }: Props) {
+function TextInput({ label, feild, onChange, invalidMessage, validMessage }: Props) {
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
     onChange(e.target.name, e.target.value);
   }
@@ -18,14 +17,16 @@ function TextInput({ label, feild, max, required, onChange, error }: Props) {
     <div className="text-input">
       <label htmlFor={feild}>{label}</label> <br />
       <input
-        type="text"
+        type="password"
         id={feild}
         name={feild}
         onChange={handleInputChange}
-        maxLength={max}
-        required={required}
+        maxLength={256}
+        minLength={8}
+        required={true}
       ></input>
-      <div className="input-error">{error}</div>
+      <div className="input-error">{invalidMessage}</div>
+      <div className="input-success">{validMessage}</div>
     </div>
   );
 }

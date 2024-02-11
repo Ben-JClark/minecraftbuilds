@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import "../../../styling/ImageInput.css";
+import "../../styling/ImageInput.css";
 
 type Image = {
   url: string;
@@ -13,7 +13,7 @@ interface Props {
   max: number;
   onChange: (formFeild: string, value: File[]) => void;
   formImageFiles: File[];
-  error: string | null;
+  error: string | null | undefined;
 }
 
 function ImageInput({ label, feild, required, max, onChange, formImageFiles, error }: Props) {

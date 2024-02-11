@@ -1,9 +1,9 @@
 import { FormEvent, useState } from "react";
-import ImageInput from "./ImageInput";
-import TextInput from "./TextInput";
-import NumberInput from "./NumberInput";
-import TextAreaInput from "./TextAreaInput";
-import RadioInput from "./RadioInput";
+import ImageInput from "../../form_comps/ImageInput";
+import TextInput from "../../form_comps/TextInput";
+import NumberInput from "../../form_comps/NumberInput";
+import TextAreaInput from "../../form_comps/TextAreaInput";
+import RadioInput from "../../form_comps/RadioInput";
 import { Link } from "react-router-dom";
 import axios from "axios";
 

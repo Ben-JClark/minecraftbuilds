@@ -1,5 +1,5 @@
 import { ChangeEvent } from "react";
-import "../../../styling/TextAreaInput.css";
+import "../../styling/TextAreaInput.css";
 
 interface Props {
   label: string;
@@ -7,7 +7,7 @@ interface Props {
   required: boolean;
   max: number;
   onChange: (formFeild: string, value: string) => void;
-  error: string | null;
+  error: string | null | undefined;
 }
 
 function TextAreaInput({ label, feild, max, required, onChange, error }: Props) {
