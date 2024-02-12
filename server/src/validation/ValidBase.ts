@@ -83,5 +83,27 @@ function validBase(base: Base): ValidationResult {
   return response;
 }
 
-export { validBase };
+function parseBase(serverId: number, ownerId: number, requestBody: any, requestFiles: Express.Multer.File[]): Base {
+  const fileNames: string[] = requestFiles.map((obj: any) => {
+    return obj.filename;
+  });
+
+  const base: Base = {
+    server_id: serverId,
+    owner_id: ownerId,
+    base_name: requestBody.base_name,
+    base_description: requestBody.base_description,
+    x_coordinate: parseInt(requestBody.x_coordinate),
+    z_coordinate: parseInt(requestBody.z_coordinate),
+    for_sale: String(requestBody.for_sale).toLocaleLowerCase() === "true",
+    purchase_price: parseInt(requestBody.purchase_price),
+    purchase_item: requestBody.purchase_item,
+    purchase_method: requestBody.purchase_method,
+    image_files: fileNames,
+  };
+
+  return base;
+}
+
+export { validBase, parseBase };
 export type { Base };
