@@ -2,11 +2,17 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 const app: Express = express();
-import { getServers, getLongDescription, getBases, addBase } from "./database/queries.js";
-import { multerInstance, path, __dirname } from "./fileOperations/localOperations.js";
-import { parseBase } from "./validation/ValidBase.js";
-import type { Base } from "./validation/ValidBase.js";
-import type { ValidationResult } from "./validation/TypeValidation.js";
+import { getServers, getLongDescription, getBases, addBase } from "./database/Queries.js";
+import { multerInstance, path, __dirname } from "./file_operations/FileOperations.js";
+import { parseBase } from "./type_operations/BaseOperations.js";
+import type { Base } from "./type_operations/BaseOperations.js";
+
+type ServerResponse = {
+  success: boolean;
+  statusCode: number;
+  invalidFeild?: string;
+  errorMessage?: string;
+};
 
 // app.use(express.urlencoded({ extended: true }));
 // app.use(express.json());
@@ -51,9 +57,11 @@ app.get("/server/:serverName/:serverID/bases", async (req: Request, res: Respons
 });
 
 app.post("/server/:serverName/:serverID/bases", multerInstance.array("image_files", 5), async (req, res) => {
-  const base = parseBase(parseInt(req.params.serverID), 1, req.body, req.files as Express.Multer.File[]); // Convert the request into a base object
-  const response: ValidationResult = await addBase(base); // Insert the base into the MySQL db
+  const base: Base = parseBase(parseInt(req.params.serverID), 1, req.body, req.files as Express.Multer.File[]); // Convert the request into a base object
+  const response: ServerResponse = await addBase(base); // Insert the base into the MySQL db
   res.status(response.statusCode).json(response); // Send back a response
 });
 
 app.listen(5000);
+
+export type { ServerResponse };

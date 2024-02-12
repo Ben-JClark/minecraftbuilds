@@ -1,8 +1,8 @@
-import { pool } from "./pool.js";
-import type { Base } from "../validation/ValidBase.js";
-import { validBase } from "../validation/ValidBase.js";
-import { renameImages } from "../fileOperations/localOperations.js";
-import type { ValidationResult } from "../validation/TypeValidation.js";
+import { pool } from "./Pool.js";
+import type { Base } from "../type_operations/BaseOperations.js";
+import { validBase } from "../type_operations/BaseOperations.js";
+import { renameImages } from "../file_operations/FileOperations.js";
+import type { ServerResponse } from "../Server.js";
 
 /**
  * Query the mysql database to get a list of servers
@@ -80,14 +80,14 @@ async function getBases(serverID: number) {
 }
 
 /**
- * Query the mysql database to add a base to the table Bases
- * This query does not add any images
- * @returns null if there is an error, false if mysql couldn't add the base, true if the base was added
+ * Query the mysql database to add a base to the table Bases and image names to Base_Images via the procedure add_base
+ * base names are returned and the localy saved images are renamed to match the db
+ * @returns ValidationResult that has a status code and any error messages
  */
-async function addBase(base: Base): Promise<ValidationResult> {
+async function addBase(base: Base): Promise<ServerResponse> {
   // validate the base passed
-  let response: ValidationResult = validBase(base);
-  if (response.validRequest !== true) {
+  let response: ServerResponse = validBase(base);
+  if (response.success !== true) {
     console.log("Base is not valid: ", response);
     return response;
   }
@@ -115,7 +115,7 @@ async function addBase(base: Base): Promise<ValidationResult> {
     });
     // Rename the images
     response = await renameImages(base.image_files, newNames, "base");
-    if (response.validRequest) {
+    if (response.success) {
       response.statusCode = 201;
     }
   } catch (error) {

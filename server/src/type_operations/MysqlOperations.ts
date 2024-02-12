@@ -1,9 +1,4 @@
-type ValidationResult = {
-  validRequest: boolean;
-  statusCode: number;
-  invalidFeild?: string;
-  errorMessage?: string;
-};
+import type { ServerResponse } from "../Server.js";
 
 /**
  * Defines the max values of Unsigned Integers MySQL supports
@@ -26,18 +21,18 @@ export enum IntSignedMax {
  * @param input the string we want to veryify
  * @param minLength the minimum lenth of the string
  * @param maxLength the maximum length of the string
- * @returns ValidationResult where isValid is true or false, errorMessage states why inValid is false
+ * @returns ServerResponse where success is true or false, errorMessage states why success is false
  */
-function validVarchar(input: any, minLength: number, maxLength: number): ValidationResult {
-  let response: ValidationResult = {
-    validRequest: false,
+function validVarchar(input: any, minLength: number, maxLength: number): ServerResponse {
+  let response: ServerResponse = {
+    success: false,
     statusCode: 500,
   };
   if (input !== undefined) {
     if (input !== null) {
       if (input.length >= minLength) {
         if (input.length <= maxLength) {
-          response.validRequest = true;
+          response.success = true;
         } else {
           response.errorMessage = `Your input is too long! must enter less than ${maxLength} ${
             maxLength > 1 ? "characters" : "character"
@@ -56,7 +51,7 @@ function validVarchar(input: any, minLength: number, maxLength: number): Validat
   }
 
   // invalid input = 400 Bad Request
-  if (response.validRequest === false) {
+  if (response.success === false) {
     response.statusCode = 400;
   }
 
@@ -69,9 +64,9 @@ function validVarchar(input: any, minLength: number, maxLength: number): Validat
  * @param intUnsignedMax the INT UNSIGNED type that we are testing
  * @returns ValidationResult where isValid is true or false, errorMessage states why inValid is false
  */
-function validUnsignedInt(input: any, intUnsignedMax: IntUnsignedMax): ValidationResult {
-  let response: ValidationResult = {
-    validRequest: false,
+function validUnsignedInt(input: any, intUnsignedMax: IntUnsignedMax): ServerResponse {
+  let response: ServerResponse = {
+    success: false,
     statusCode: 500,
   };
 
@@ -80,7 +75,7 @@ function validUnsignedInt(input: any, intUnsignedMax: IntUnsignedMax): Validatio
       if (Number.isInteger(input)) {
         if (input >= 0) {
           if (input <= intUnsignedMax) {
-            response.validRequest = true;
+            response.success = true;
           } else {
             response.errorMessage = `Your input is too big! Keep it below ${intUnsignedMax}`;
           }
@@ -98,7 +93,7 @@ function validUnsignedInt(input: any, intUnsignedMax: IntUnsignedMax): Validatio
   }
 
   // invalid input = 400 Bad Request
-  if (response.validRequest === false) {
+  if (response.success === false) {
     response.statusCode = 400;
   }
 
@@ -111,9 +106,9 @@ function validUnsignedInt(input: any, intUnsignedMax: IntUnsignedMax): Validatio
  * @param intShignedMax the INT SIGNED type that we are testing
  * @returns ValidationResult where isValid is true or false, errorMessage states why inValid is false
  */
-function validSignedInt(input: any, intSignedMax: IntSignedMax): ValidationResult {
-  let response: ValidationResult = {
-    validRequest: false,
+function validSignedInt(input: any, intSignedMax: IntSignedMax): ServerResponse {
+  let response: ServerResponse = {
+    success: false,
     statusCode: 500,
   };
 
@@ -122,7 +117,7 @@ function validSignedInt(input: any, intSignedMax: IntSignedMax): ValidationResul
       if (Number.isInteger(input)) {
         if (input >= -intSignedMax) {
           if (input <= intSignedMax) {
-            response.validRequest = true;
+            response.success = true;
           } else {
             response.errorMessage = `Your input is too big! Keep it below ${intSignedMax}`;
           }
@@ -140,23 +135,23 @@ function validSignedInt(input: any, intSignedMax: IntSignedMax): ValidationResul
   }
 
   // invalid input = 400 Bad Request
-  if (response.validRequest === false) {
+  if (response.success === false) {
     response.statusCode = 400;
   }
 
   return response;
 }
 
-function validBoolean(input: any) {
-  let response: ValidationResult = {
-    validRequest: false,
+function validBoolean(input: any): ServerResponse {
+  let response: ServerResponse = {
+    success: false,
     statusCode: 500,
   };
 
   if (input !== undefined) {
     if (input !== null) {
       if (typeof input == "boolean") {
-        response.validRequest = true;
+        response.success = true;
       } else {
         response.errorMessage = "Your input must be true, false, 1, or 0";
       }
@@ -168,59 +163,12 @@ function validBoolean(input: any) {
   }
 
   // invalid input = 400 Bad Request
-  if (response.validRequest === false) {
+  if (response.success === false) {
     response.statusCode = 400;
   }
 
   return response;
 }
 
-/**
- * Checks if the input is a string array and the length is within the range
- * @param input the file names
- * @param min the minimum number of file names
- * @param max the maximum number of file names
- * @returns
- */
-function validFileNames(input: any, min: number, max: number) {
-  let response: ValidationResult = {
-    validRequest: false,
-    statusCode: 500,
-  };
-
-  if (input !== undefined) {
-    if (input !== null) {
-      if (Array.isArray(input)) {
-        if (input.length >= min) {
-          if (input.length <= max) {
-            if (input.every((filename) => typeof filename === "string")) {
-              response.validRequest = true;
-            } else {
-              response.errorMessage = "The file names are not all a string";
-            }
-          } else {
-            response.errorMessage = `You can't upload more than ${max} ${max > 1 ? "files" : "file"} `;
-          }
-        } else {
-          response.errorMessage = `You must at lest upload ${min} ${min > 1 ? "files" : "file"} `;
-        }
-      } else {
-        response.errorMessage = "The files are not an array";
-      }
-    } else {
-      response.errorMessage = "The files can't be null";
-    }
-  } else {
-    response.errorMessage = "The files cannot be undefined";
-  }
-
-  // invalid input = 400 Bad Request
-  if (response.validRequest === false) {
-    response.statusCode = 400;
-  }
-
-  return response;
-}
-
-export { validVarchar, validSignedInt, validUnsignedInt, validBoolean, validFileNames };
-export type { ValidationResult };
+export { validVarchar, validSignedInt, validUnsignedInt, validBoolean };
+export type { ServerResponse };
