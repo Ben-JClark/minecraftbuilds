@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import PasswordInput from "./form_comps/PasswordInput";
 import TextInput from "./form_comps/TextInput";
+import EmailInput from "./form_comps/EmailInput";
 import axios from "axios";
 
 type FormMessage = {
@@ -31,35 +32,39 @@ function SignUp() {
 
   function handleChange(formFeild: string, value: string) {
     console.log(`handleChange for: ${formFeild} with value ${value}`);
+    // Check and set the confirm password which is not part of the formData
     if (formFeild === "confirm_password") {
       console.log(`Set ${formFeild} to: ${value}`);
-      setConfirmedPassword(value);
-    }
-    // If the user enters a password check if they match
-    if (formFeild === "confirm_password" || formFeild === "password") {
-      if (confirmedPassword === formData.password) {
-        console.log(`${confirmedPassword} === ${formData.password}`);
-        setFormMessage({ invalidFeild: undefined, validFeild: "confirm_password", message: "Your passwords match" });
-      } else {
-        console.log(`${confirmedPassword} !== ${formData.password}`);
-        setFormMessage({
-          validFeild: undefined,
-          invalidFeild: "confirm_password",
-          message: "Your passwords do not match",
-        });
-      }
+      setConfirmedPassword(() => value);
     } else {
-      setFormData({
-        ...formData,
+      // Else update formData
+      setFormData((prevFormData) => ({
+        ...prevFormData,
         [formFeild]: value,
-      });
+      }));
+    }
+
+    // If one password has been updated check if they match
+    if (formFeild === "password") {
+      passwordsMatch(value, confirmedPassword);
+    } else if (formFeild === "confirm_password") {
+      passwordsMatch(formData.password, value);
+    }
+  }
+
+  function passwordsMatch(password: string, cPassword: string): boolean {
+    if (password === cPassword) {
+      setFormMessage({ invalidFeild: undefined, validFeild: "confirm_password", message: "Passwords match" });
+      return true;
+    } else {
+      setFormMessage({ validFeild: undefined, invalidFeild: "confirm_password", message: "Passwords don't match" });
+      return false;
     }
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // Make sure the confirmed password matches
-    if (formData.password === confirmedPassword) {
+    if (passwordsMatch(formData.password, confirmedPassword)) {
       let serverResponse: FormMessage;
       try {
         serverResponse = await axios.post(`http://localhost:5000/signup`, formData, {
@@ -73,16 +78,12 @@ function SignUp() {
         if (error.formMessage) {
           console.log("Error formMessage from the server", error.formMessage);
         } else {
-          // Else there was some other errorh
+          // Else there was some other error
           console.log("General Error signing up: ", error.message);
         }
       }
     } else {
-      console.log("Confirmed password does not match");
-      setFormMessage({
-        invalidFeild: "confirm_password",
-        message: "Your confirmed password does not match your password",
-      });
+      console.log("Can't submit, confirmed password does not match");
     }
   }
 
@@ -101,7 +102,7 @@ function SignUp() {
             onChange={handleChange}
             error={formMessage?.invalidFeild === "username" ? formMessage.message : null}
           />
-          <TextInput
+          <EmailInput
             label="Enter your email"
             feild="email"
             max={254}
