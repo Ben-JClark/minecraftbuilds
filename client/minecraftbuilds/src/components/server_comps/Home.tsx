@@ -6,6 +6,14 @@ interface Props {
   serverID: number;
 }
 
+type ServerResponse = {
+  success: boolean;
+  statusCode: number;
+  data?: any;
+  invalidFeild?: string;
+  errorMessage?: string;
+};
+
 function Home({ serverName, serverID }: Props) {
   // Fetch the data of the server
   const [longDescription, setLongDescription] = useState<string>();
@@ -13,16 +21,12 @@ function Home({ serverName, serverID }: Props) {
   useEffect(() => {
     async function getLongDescription() {
       try {
-        const response = await fetch(`http://localhost:5000/server/${serverName}/${serverID}/home`);
-        const data = await response.json();
-        if (data.error === undefined) {
-          if (Array.isArray(data) && data[0].long_description !== undefined) {
-            setLongDescription(data[0].long_description);
-          } else {
-            console.log("Error long description is in incorrect format");
-          }
+        const response = await fetch(`http://localhost:5000/server/${serverID}/home`);
+        const serverResponse = (await response.json()) as ServerResponse;
+        if (serverResponse.statusCode === 200) {
+          setLongDescription(serverResponse.data.long_description);
         } else {
-          console.log("Error when fetching long descripton: ", data.error);
+          console.log("Error when fetching long descripton: ", serverResponse.errorMessage);
         }
       } catch (error) {
         console.log("Error when fetching long descripton: ", error);

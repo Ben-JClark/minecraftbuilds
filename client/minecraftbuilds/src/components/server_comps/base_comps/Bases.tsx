@@ -24,6 +24,14 @@ type BasePreview = {
   buyerName: string | undefined;
 };
 
+type ServerResponse = {
+  success: boolean;
+  statusCode: number;
+  data?: any;
+  invalidFeild?: string;
+  errorMessage?: string;
+};
+
 function Bases({ serverName, serverID }: Props) {
   const [baseList, setBaseList] = useState<BasePreview[]>([]);
 
@@ -31,32 +39,28 @@ function Bases({ serverName, serverID }: Props) {
   useEffect(() => {
     async function getBaseList() {
       try {
-        const response = await fetch(`http://localhost:5000/server/${serverName}/${serverID}/bases`);
-        const data = await response.json();
-        if (data.error === undefined) {
-          if (Array.isArray(data)) {
-            const list: BasePreview[] = data.map((baseData: any) => ({
-              baseId: baseData.id,
-              baseName: baseData.base_name,
-              mainImageName: baseData.main_image_name,
-              ownerId: baseData.owner_id,
-              ownerName: baseData.owner_username,
-              listedDate: new Date(baseData.created_at),
-              xCord: baseData.x_coordinate,
-              zCord: baseData.z_coordinate,
-              forSale: baseData.for_sale,
-              purchasePrice: baseData.purchase_price,
-              purchaseItem: baseData.purchase_item,
-              buyerID: baseData.buyer_id,
-              buyerName: baseData.buyer_username,
-            }));
-            console.log(list);
-            setBaseList(list);
-          } else {
-            console.log("Error baselist is not in array format");
-          }
+        const response = await fetch(`http://localhost:5000/server/${serverID}/bases`);
+        const serverResponse = (await response.json()) as ServerResponse;
+        // If we successfully requested the base list, map it
+        if (serverResponse.statusCode === 200) {
+          const list: BasePreview[] = serverResponse.data.map((baseData: any) => ({
+            baseId: baseData.id,
+            baseName: baseData.base_name,
+            mainImageName: baseData.main_image_name,
+            ownerId: baseData.owner_id,
+            ownerName: baseData.owner_username,
+            listedDate: new Date(baseData.created_at),
+            xCord: baseData.x_coordinate,
+            zCord: baseData.z_coordinate,
+            forSale: baseData.for_sale,
+            purchasePrice: baseData.purchase_price,
+            purchaseItem: baseData.purchase_item,
+            buyerID: baseData.buyer_id,
+            buyerName: baseData.buyer_username,
+          }));
+          setBaseList(list);
         } else {
-          console.log("Error occured from server when fetching the list of bases", data.error);
+          console.log("Error occured from server when fetching the list of bases", serverResponse.errorMessage);
         }
       } catch (error) {
         console.log("Error when fetching list of bases: ", error);

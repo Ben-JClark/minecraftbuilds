@@ -6,6 +6,7 @@ import {
   validUnsignedInt,
   validBoolean,
 } from "./MysqlOperations.js";
+import { validServerId } from "./ServerOperations.js";
 import { validFileNames } from "../file_operations/FileOperations.js";
 import type { ServerResponse } from "../Server.js";
 
@@ -24,7 +25,7 @@ type Base = {
 };
 
 function validBase(base: Base): ServerResponse {
-  let response: ServerResponse = validUnsignedInt(base.server_id, IntUnsignedMax.UnsignedSmallIntMax);
+  let response: ServerResponse = validServerId(base.server_id);
   if (response.success) {
     response = validUnsignedInt(base.owner_id, IntUnsignedMax.UnsignedSmallIntMax);
     if (response.success) {
@@ -77,8 +78,6 @@ function validBase(base: Base): ServerResponse {
     } else {
       response.invalidFeild = "owner_id";
     }
-  } else {
-    response.invalidFeild = "server_id";
   }
   return response;
 }

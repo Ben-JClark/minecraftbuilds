@@ -3,29 +3,32 @@ import type { Base } from "../type_operations/BaseOperations.js";
 import { validBase } from "../type_operations/BaseOperations.js";
 import { renameImages } from "../file_operations/FileOperations.js";
 import type { ServerResponse } from "../Server.js";
+import { validServerId } from "../type_operations/ServerOperations.js";
 
 /**
  * Query the mysql database to get a list of servers
  * @returns null or a list of servers in json format
  */
-async function getServers() {
+async function getServers(): Promise<ServerResponse> {
+  let serverResponse: ServerResponse = {
+    success: false,
+    statusCode: 500,
+  };
+
   let connection;
   try {
     connection = await pool.getConnection();
-    const [response] = await connection.query("CALL get_servers()");
-    if (Array.isArray(response)) {
-      return response[0];
-    } else {
-      console.log("Error: Response from sql was not in array format");
-      return null;
-    }
+    const [response] = (await connection.query("CALL get_servers()")) as any;
+    serverResponse.data = response[0];
+    serverResponse.statusCode = 200;
   } catch (error) {
-    console.log("Error getting serverdata: ", error);
-    return null;
+    serverResponse.success = false;
+    serverResponse.errorMessage = "Error getting serverdata: ";
   } finally {
     if (connection !== undefined) {
       connection.release();
     }
+    return serverResponse;
   }
 }
 
@@ -33,24 +36,30 @@ async function getServers() {
  * Get the long description of a server from MySQL
  * @returns null or the server description in json format
  */
-async function getLongDescription(id: number) {
+async function getLongDescription(serverID: number): Promise<ServerResponse> {
+  // Validate the serverID
+  let serverResponse: ServerResponse = validServerId(serverID);
+  if (serverResponse.success !== true) {
+    return serverResponse;
+  }
+
   let connection;
   try {
     connection = await pool.getConnection();
-    const [response] = await connection.query("CALL get_long_description(?)", [id]);
-    if (Array.isArray(response)) {
-      return response[0];
-    } else {
-      console.log("Error: Response from sql was not in array format");
-      return null;
-    }
+    // Query the db for the long description
+    const [response] = (await connection.query("CALL get_long_description(?)", [serverID])) as any;
+    // return the long descripton and status
+    console.log("Setting response data for get long description as: ", response[0][0]);
+    serverResponse.data = response[0][0];
+    serverResponse.statusCode = 200;
   } catch (error) {
-    console.log("Error getting long descripton: ", error);
-    return null;
+    serverResponse.success = false;
+    serverResponse.errorMessage = "Error getting long description of a base";
   } finally {
     if (connection !== undefined) {
       connection.release();
     }
+    return serverResponse;
   }
 }
 
@@ -58,24 +67,29 @@ async function getLongDescription(id: number) {
  * Query the mysql database to get a bases for a particular server
  * @returns null or a list of bases in json format
  */
-async function getBases(serverID: number) {
+async function getBases(serverID: number): Promise<ServerResponse> {
+  // Validate the serverID
+  let serverResponse: ServerResponse = validServerId(serverID);
+  if (serverResponse.success !== true) {
+    return serverResponse;
+  }
+
   let connection;
   try {
     connection = await pool.getConnection();
-    const [response] = await connection.query("CALL get_bases(?)", [serverID]);
-    if (Array.isArray(response)) {
-      return response[0];
-    } else {
-      console.log("Error: Response from sql was not in array format");
-      return null;
-    }
+    // Get the bases
+    const [response] = (await connection.query("CALL get_bases(?)", [serverID])) as any;
+    // return the bases and status
+    serverResponse.data = response[0];
+    serverResponse.statusCode = 200;
   } catch (error) {
-    console.log("Error getting the list of bases: ", error);
-    return null;
+    serverResponse.success = false;
+    serverResponse.errorMessage = "Error getting the list of bases";
   } finally {
     if (connection !== undefined) {
       connection.release();
     }
+    return serverResponse;
   }
 }
 
@@ -88,7 +102,6 @@ async function addBase(base: Base): Promise<ServerResponse> {
   // validate the base passed
   let response: ServerResponse = validBase(base);
   if (response.success !== true) {
-    console.log("Base is not valid: ", response);
     return response;
   }
 

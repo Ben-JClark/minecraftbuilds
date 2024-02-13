@@ -82,7 +82,7 @@ function AddBase({ serverName, serverID }: Props) {
 
       console.log("bodyFormData: ", bodyFormData);
 
-      response = await axios.post(`http://localhost:5000/server/${serverName}/${serverID}/bases`, bodyFormData, {
+      response = await axios.post(`http://localhost:5000/server/${serverID}/bases`, bodyFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

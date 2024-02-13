@@ -16,6 +16,14 @@ type Server = {
   userCount: number;
 };
 
+type ServerResponse = {
+  success: boolean;
+  statusCode: number;
+  data?: any;
+  invalidFeild?: string;
+  errorMessage?: string;
+};
+
 function ServerBrowser() {
   const [serverList, setServerList] = useState<Server[]>([]);
 
@@ -24,9 +32,9 @@ function ServerBrowser() {
     async function getServerList() {
       try {
         const response = await fetch("http://localhost:5000/");
-        const data = await response.json();
-        if (data.error === undefined && Array.isArray(data)) {
-          const serverData: Server[] = data.map((rawServerData: any) => ({
+        const serverResponse = (await response.json()) as ServerResponse;
+        if (serverResponse.statusCode === 200) {
+          const serverData: Server[] = serverResponse.data.map((rawServerData: any) => ({
             serverName: rawServerData.server_name,
             serverId: rawServerData.server_id,
             shortDescription: rawServerData.short_description,
@@ -40,7 +48,7 @@ function ServerBrowser() {
           }));
           setServerList(serverData);
         } else {
-          console.log("Error received from the server: ", data.error);
+          console.log("Error received from the server: ", serverResponse.errorMessage);
         }
       } catch (error) {
         console.log("Error fetching the list of servers: ", error);
