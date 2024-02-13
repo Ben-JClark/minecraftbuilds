@@ -22,7 +22,6 @@ async function getServers(): Promise<ServerResponse> {
     serverResponse.data = response[0];
     serverResponse.statusCode = 200;
   } catch (error) {
-    serverResponse.success = false;
     serverResponse.errorMessage = "Error getting serverdata: ";
   } finally {
     if (connection !== undefined) {
@@ -132,7 +131,7 @@ async function addBase(base: Base): Promise<ServerResponse> {
       response.statusCode = 201;
     }
   } catch (error) {
-    console.log("Error getting the list of bases: ", error);
+    response.success = false;
     response.errorMessage = "Could not upload the base to the database";
   } finally {
     if (connection !== undefined) {
