@@ -6,7 +6,6 @@
   grid-area: page;
   display: grid;
   grid-template-areas: "options" "content";
-  grid-template-rows: 1fr 3fr;
 }
 .options {
   grid-area: options;
@@ -45,4 +44,18 @@
     grid-template-areas: "sidebar-l page sidebar-r";
     grid-template-columns: 1fr 4fr 1fr;
   }
+}
+
+/* Display input errors as red italic text */
+.input-error {
+  color: red;
+  font-style: italic;
+}
+/* Display generic errors inside red boxes */
+.generic-error {
+  color: red;
+  background-color: lightpink;
+  border-style: solid;
+  border-width: 2px;
+  border-color: red;
 }

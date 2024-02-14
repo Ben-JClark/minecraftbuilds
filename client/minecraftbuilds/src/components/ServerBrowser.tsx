@@ -3,6 +3,11 @@ import { useEffect, useState } from "react";
 import ServerListing from "./ServerListing";
 import "../styling/ServerBrowser.css";
 
+import axios from "axios";
+// Imports related to parsing the server response
+import type { ServerResponse, ServerMessage } from "../ServerUtils";
+import { parseServerMessage } from "../ServerUtils";
+
 type Server = {
   serverName: string;
   serverId: number;
@@ -16,42 +21,31 @@ type Server = {
   userCount: number;
 };
 
-type ServerResponse = {
-  success: boolean;
-  statusCode: number;
-  data?: any;
-  invalidFeild?: string;
-  errorMessage?: string;
-};
-
 function ServerBrowser() {
   const [serverList, setServerList] = useState<Server[]>([]);
+  const [serverMessage, setServerMessage] = useState<ServerMessage | undefined>(undefined);
 
-  // Only when mounting, fetch and map all the Server data
   useEffect(() => {
     async function getServerList() {
       try {
-        const response = await fetch("http://localhost:5000/");
-        const serverResponse = (await response.json()) as ServerResponse;
-        if (serverResponse.statusCode === 200) {
-          const serverData: Server[] = serverResponse.data.map((rawServerData: any) => ({
-            serverName: rawServerData.server_name,
-            serverId: rawServerData.server_id,
-            shortDescription: rawServerData.short_description,
-            gamemode: rawServerData.gamemode,
-            region: rawServerData.region,
-            configuration: rawServerData.configuration,
-            listedDate: new Date(rawServerData.created_at),
-            ownerId: rawServerData.owner_id,
-            ownerUsername: rawServerData.username,
-            userCount: rawServerData.user_count,
-          }));
-          setServerList(serverData);
-        } else {
-          console.log("Error received from the server: ", serverResponse.errorMessage);
-        }
-      } catch (error) {
-        console.log("Error fetching the list of servers: ", error);
+        const getResponse = await axios.get("http://localhost:5000/");
+        const response: ServerResponse = getResponse.data;
+
+        const serverData: Server[] = response.data.map((rawServerData: any) => ({
+          serverName: rawServerData.server_name,
+          serverId: rawServerData.server_id,
+          shortDescription: rawServerData.short_description,
+          gamemode: rawServerData.gamemode,
+          region: rawServerData.region,
+          configuration: rawServerData.configuration,
+          listedDate: new Date(rawServerData.created_at),
+          ownerId: rawServerData.owner_id,
+          ownerUsername: rawServerData.username,
+          userCount: rawServerData.user_count,
+        }));
+        setServerList(serverData);
+      } catch (error: any) {
+        setServerMessage(parseServerMessage(error?.response?.data));
       }
     }
 
@@ -64,6 +58,12 @@ function ServerBrowser() {
         <div className="page">
           <div className="options">options</div>
           <div className="content">
+            {/* Display any errors*/}
+            {serverMessage?.success === false ? (
+              <div className="generic-error"> {serverMessage?.errorMessage} </div>
+            ) : null}
+
+            {/* Display all the servers */}
             <ul className="sl-container">
               {serverList.map((server: Server) => (
                 <li className="sl-item" key={server.serverId}>

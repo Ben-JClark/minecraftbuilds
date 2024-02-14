@@ -22,7 +22,7 @@ async function getServers(): Promise<ServerResponse> {
     serverResponse.data = response[0];
     serverResponse.statusCode = 200;
   } catch (error) {
-    serverResponse.errorMessage = "Error getting serverdata: ";
+    serverResponse.errorMessage = "Error getting the servers from the database";
   } finally {
     if (connection !== undefined) {
       connection.release();
@@ -53,7 +53,7 @@ async function getLongDescription(serverID: number): Promise<ServerResponse> {
     serverResponse.statusCode = 200;
   } catch (error) {
     serverResponse.success = false;
-    serverResponse.errorMessage = "Error getting long description of a base";
+    serverResponse.errorMessage = "Error getting the server description from the database";
   } finally {
     if (connection !== undefined) {
       connection.release();
