@@ -37,7 +37,7 @@ function Bases({ serverName, serverID }: Props) {
   useEffect(() => {
     async function getBaseList() {
       try {
-        const getResponse = await axios.get(`http://localhost:5000/server/${serverID}/bases`);
+        const getResponse = await axios.get(`http://localhost:5000/servers/${serverID}/bases`);
         const response: ServerResponse = getResponse.data;
 
         const list: BasePreview[] = response.data.map((baseData: any) => ({

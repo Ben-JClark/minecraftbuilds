@@ -40,7 +40,7 @@ function SignUp() {
     e.preventDefault();
     if (formData.password === confirmedPassword) {
       try {
-        const postResponse = await axios.post(`http://localhost:5000/signup`, formData, {
+        const postResponse = await axios.post(`http://localhost:5000/auth/`, formData, {
           headers: {
             "Content-Type": "application/json",
           },

@@ -69,7 +69,7 @@ function AddBase({ serverName, serverID }: Props) {
         bodyFormData.append(`image_files`, file);
       });
 
-      const postResponse = await axios.post(`http://localhost:5000/server/${serverID}/bases`, bodyFormData, {
+      const postResponse = await axios.post(`http://localhost:5000/servers/${serverID}/bases`, bodyFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

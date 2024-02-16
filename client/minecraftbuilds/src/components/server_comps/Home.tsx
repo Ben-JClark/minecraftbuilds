@@ -18,7 +18,7 @@ function Home({ serverName, serverID }: Props) {
   useEffect(() => {
     async function getLongDescription() {
       try {
-        const getResponse = await axios.get(`http://localhost:5000/server/${serverID}/home`);
+        const getResponse = await axios.get(`http://localhost:5000/servers/${serverID}/home`);
         const response: ServerResponse = getResponse.data;
         setServerMessage(parseServerMessage(response));
         setLongDescription(response.data.long_description);

@@ -28,7 +28,7 @@ function ServerBrowser() {
   useEffect(() => {
     async function getServerList() {
       try {
-        const getResponse = await axios.get("http://localhost:5000/");
+        const getResponse = await axios.get("http://localhost:5000/servers/");
         const response: ServerResponse = getResponse.data;
 
         const serverData: Server[] = response.data.map((rawServerData: any) => ({
