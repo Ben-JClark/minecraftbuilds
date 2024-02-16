@@ -4,13 +4,9 @@ import TextInput from "./form_comps/TextInput";
 import EmailInput from "./form_comps/EmailInput";
 import axios from "axios";
 
-type FormMessage = {
-  validRequest?: boolean;
-  statusCode?: number;
-  invalidFeild?: string;
-  validFeild?: string;
-  message?: string;
-};
+// Imports related to parsing the server response
+import type { ServerResponse, ServerMessage } from "../ServerUtils";
+import { parseServerMessage } from "../ServerUtils";
 
 type signUpData = {
   username: string;
@@ -24,17 +20,12 @@ function SignUp() {
     email: "",
     password: "",
   });
-
   const [confirmedPassword, setConfirmedPassword] = useState<string>("");
-  const [formMessage, setFormMessage] = useState<FormMessage | null>(null);
-
-  console.log("formData", formData, `confirmedPassword: ${confirmedPassword}`);
+  const [serverMessage, setServerMessage] = useState<ServerMessage | undefined>(undefined);
 
   function handleChange(formFeild: string, value: string) {
-    console.log(`handleChange for: ${formFeild} with value ${value}`);
     // Check and set the confirm password which is not part of the formData
     if (formFeild === "confirm_password") {
-      console.log(`Set ${formFeild} to: ${value}`);
       setConfirmedPassword(() => value);
     } else {
       // Else update formData
@@ -43,44 +34,21 @@ function SignUp() {
         [formFeild]: value,
       }));
     }
-
-    // If one password has been updated check if they match
-    if (formFeild === "password") {
-      passwordsMatch(value, confirmedPassword);
-    } else if (formFeild === "confirm_password") {
-      passwordsMatch(formData.password, value);
-    }
-  }
-
-  function passwordsMatch(password: string, cPassword: string): boolean {
-    if (password === cPassword) {
-      setFormMessage({ invalidFeild: undefined, validFeild: "confirm_password", message: "Passwords match" });
-      return true;
-    } else {
-      setFormMessage({ validFeild: undefined, invalidFeild: "confirm_password", message: "Passwords don't match" });
-      return false;
-    }
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (passwordsMatch(formData.password, confirmedPassword)) {
-      let serverResponse: FormMessage;
+    if (formData.password === confirmedPassword) {
       try {
-        serverResponse = await axios.post(`http://localhost:5000/signup`, formData, {
+        const postResponse = await axios.post(`http://localhost:5000/signup`, formData, {
           headers: {
             "Content-Type": "application/json",
           },
         });
-        console.log("Response from server: ", serverResponse);
+        const response: ServerResponse = postResponse.data;
+        setServerMessage(parseServerMessage(response));
       } catch (error: any) {
-        // If we got a formMessage from the server
-        if (error.formMessage) {
-          console.log("Error formMessage from the server", error.formMessage);
-        } else {
-          // Else there was some other error
-          console.log("General Error signing up: ", error.message);
-        }
+        setServerMessage(parseServerMessage(error?.response?.data));
       }
     } else {
       console.log("Can't submit, confirmed password does not match");
@@ -100,7 +68,7 @@ function SignUp() {
             max={16}
             required={true}
             onChange={handleChange}
-            error={formMessage?.invalidFeild === "username" ? formMessage.message : null}
+            error={serverMessage?.invalidFeild === "username" ? serverMessage.errorMessage : null}
           />
           <EmailInput
             label="Enter your email"
@@ -108,22 +76,30 @@ function SignUp() {
             max={254}
             required={true}
             onChange={handleChange}
-            error={formMessage?.invalidFeild === "email" ? formMessage.message : null}
+            error={serverMessage?.invalidFeild === "email" ? serverMessage.errorMessage : null}
           />
           <PasswordInput
             label="Enter your password"
             feild="password"
             onChange={handleChange}
-            validMessage={formMessage?.invalidFeild === "password" ? formMessage.message : null}
-            invalidMessage={formMessage?.validFeild === "password" ? formMessage.message : null}
+            error={serverMessage?.invalidFeild === "password" ? serverMessage.errorMessage : null}
           />
           <PasswordInput
             label="Confirm your password"
             feild="confirm_password"
             onChange={handleChange}
-            validMessage={formMessage?.invalidFeild === "confirm_password" ? formMessage.message : null}
-            invalidMessage={formMessage?.validFeild === "confirm_password" ? formMessage.message : null}
+            error={serverMessage?.invalidFeild === "confirm_password" ? serverMessage.errorMessage : null}
           />
+
+          {/* Display a message weather the passwords match */}
+          {formData.password.length >= 8 && confirmedPassword.length >= 8 ? (
+            formData.password === confirmedPassword ? (
+              <div>Passwords match</div>
+            ) : (
+              <div className="input-error">Passwords don't match</div>
+            )
+          ) : null}
+
           <button type="submit">Sign up</button>
         </form>
       </div>

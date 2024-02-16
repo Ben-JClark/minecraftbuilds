@@ -4,11 +4,10 @@ interface Props {
   label: string;
   feild: string;
   onChange: (formFeild: string, value: string) => void;
-  invalidMessage: string | null | undefined;
-  validMessage: string | null | undefined;
+  error: string | null | undefined;
 }
 
-function TextInput({ label, feild, onChange, invalidMessage, validMessage }: Props) {
+function TextInput({ label, feild, onChange, error }: Props) {
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
     onChange(e.target.name, e.target.value);
   }
@@ -25,8 +24,7 @@ function TextInput({ label, feild, onChange, invalidMessage, validMessage }: Pro
         minLength={8}
         required={true}
       ></input>
-      <div className="input-error">{invalidMessage}</div>
-      <div className="input-success">{validMessage}</div>
+      <div className="input-error">{error}</div>
     </div>
   );
 }
