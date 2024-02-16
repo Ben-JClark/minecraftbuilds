@@ -91,7 +91,7 @@ function SignUp() {
             error={serverMessage?.invalidFeild === "confirm_password" ? serverMessage.errorMessage : null}
           />
 
-          {/* Display a message weather the passwords match */}
+          {/* Display if the passwords match when they input 8 or more characters */}
           {formData.password.length >= 8 && confirmedPassword.length >= 8 ? (
             formData.password === confirmedPassword ? (
               <div>Passwords match</div>
