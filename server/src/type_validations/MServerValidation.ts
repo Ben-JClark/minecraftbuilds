@@ -1,4 +1,4 @@
-import { validUnsignedInt, IntUnsignedMax } from "./MysqlOperations.js";
+import { validUnsignedInt, IntUnsignedMax } from "./MysqlTypeValidation.js";
 import { ServerResponse } from "../Server.js";
 
 function validServerId(serverId: any): ServerResponse {

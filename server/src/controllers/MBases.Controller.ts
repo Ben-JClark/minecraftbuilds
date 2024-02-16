@@ -3,11 +3,11 @@ import { pool } from "../database/Pool.js";
 // Import file operation functions
 import { renameImages } from "../file_operations/FileOperations.js";
 // Import validation functions
-import { validServerId } from "../type_operations/MServerOperations.js";
-import { validBase } from "../type_operations/MBaseOperations.js";
+import { validServerId } from "../type_validations/MServerValidation.js";
+import { validBase } from "../type_validations/MBaseValidation.js";
 // Import types
 import type { ServerResponse } from "../Server.js";
-import type { Base } from "../type_operations/MBaseOperations.js";
+import type { Base } from "../type_validations/MBaseValidation.js";
 
 export async function getBases(req: Request, res: Response): Promise<void> {
   // Validate the serverID

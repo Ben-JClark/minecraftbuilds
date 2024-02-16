@@ -2,7 +2,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import path from "path";
 import { rename } from "fs/promises";
-import type { ServerResponse } from "../type_operations/MysqlOperations.js";
+import type { ServerResponse } from "../type_validations/MysqlTypeValidation.js";
 
 // Get the multer middleware instance that provides methods to get data and files from multipart/form-data posts
 import multer from "multer";
