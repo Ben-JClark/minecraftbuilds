@@ -1,7 +1,7 @@
 import { validUnsignedInt, IntUnsignedMax } from "./MysqlTypeValidation.js";
 import { ServerResponse } from "../Server.js";
 
-function validServerId(serverId: any): ServerResponse {
+function validServerId(serverId: unknown): ServerResponse {
   let response: ServerResponse = validUnsignedInt(serverId, IntUnsignedMax.UnsignedSmallIntMax);
   if (response.success === false) {
     response.invalidFeild = "server_id";
