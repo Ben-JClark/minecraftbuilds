@@ -1,5 +1,5 @@
 import express from "express";
-import { multerInstance } from "../file_operations/FileOperations.js";
+import { multerInstance } from "../utils/FileOperations.js";
 
 // Import controllers
 import { getServers } from "../controllers/MServers.Controller.js";

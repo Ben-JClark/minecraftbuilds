@@ -1,20 +1,15 @@
+import type { PoolConnection } from "mysql2/promise";
+import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 import { Request, Response } from "express";
-import { pool } from "../database/Pool.js";
+import { pool } from "../models/Pool.js";
 import crypto from "crypto";
+import { makeErrRes } from "../utils/ServerResponseUtils.js";
 
 // Import validation functions
 import { validUsername, validEmail, validPassword } from "../type_validations/AuthValidation.js";
 
-// import type { ServerResponse } from "../Server.js";
-import { PoolConnection } from "mysql2/promise";
-
-export type ServerResponse = {
-  success: boolean;
-  statusCode: number;
-  data?: any;
-  invalidFeild?: string;
-  errorMessage?: string;
-};
+// Import functions to query the db
+import { create_user, email_exists, username_exists } from "../models/User.model.js";
 
 async function hashPassword(password: string, salt: Buffer): Promise<Buffer> {
   return new Promise((resolve, reject) => {
@@ -23,16 +18,6 @@ async function hashPassword(password: string, salt: Buffer): Promise<Buffer> {
       else resolve(hash);
     });
   });
-}
-
-async function emailExists(connection: PoolConnection, email: string): Promise<Boolean> {
-  const [MySQLResponse] = (await connection.query("CALL email_exists(?)", [email])) as any;
-  return Boolean(MySQLResponse[0][0].result);
-}
-
-async function usernameExists(connection: PoolConnection, username: string): Promise<Boolean> {
-  const [MySQLResponse] = (await connection.query("CALL username_exists(?)", [username])) as any;
-  return Boolean(MySQLResponse[0][0].result);
 }
 
 export async function createUser(req: Request, res: Response): Promise<void> {
@@ -52,13 +37,12 @@ export async function createUser(req: Request, res: Response): Promise<void> {
         try {
           connection = await pool.getConnection();
           // Check username and email don't already exist
-          if (!(await usernameExists(connection, username))) {
-            if (!(await emailExists(connection, email))) {
+          if (!(await username_exists(connection, username))) {
+            if (!(await email_exists(connection, email))) {
               // Generate the salt and hash
               const salt = crypto.randomBytes(16);
               const hash = await hashPassword(password, salt);
-              // Create the user in the db
-              await connection.query("CALL create_user(?, ?, ?, ?)", [username, email, salt, hash]);
+              await create_user(connection, username, email, salt, hash);
               response.success = true;
               response.statusCode = 201;
             } else {
@@ -79,14 +63,4 @@ export async function createUser(req: Request, res: Response): Promise<void> {
   }
 
   res.status(response.statusCode).json(response);
-}
-
-export function makeErrRes(code: number, feild: string | undefined, message: string): ServerResponse {
-  let response: ServerResponse;
-  if (typeof feild === "undefined") {
-    response = { success: false, statusCode: code, errorMessage: message };
-  } else {
-    response = { success: false, statusCode: code, invalidFeild: feild, errorMessage: message };
-  }
-  return response;
 }

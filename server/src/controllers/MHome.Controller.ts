@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { pool } from "../database/Pool.js";
+import { pool } from "../models/Pool.js";
 // Import validation functions
 import { validServerId } from "../type_validations/MServerValidation.js";
 // Import types

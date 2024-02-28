@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-import { pool } from "../database/Pool.js";
+import { pool } from "../models/Pool.js";
 
 // Import types
-import type { ServerResponse } from "../Server.js";
 import { PoolConnection } from "mysql2/promise";
 
 export async function signinUser(req: Request, res: Response): Promise<void> {}

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { pool } from "../database/Pool.js";
+import { pool } from "../models/Pool.js";
 // Import file operation functions
-import { renameImages } from "../file_operations/FileOperations.js";
+import { renameImages } from "../utils/FileOperations.js";
 // Import validation functions
 import { validServerId } from "../type_validations/MServerValidation.js";
 import { validBase } from "../type_validations/MBaseValidation.js";

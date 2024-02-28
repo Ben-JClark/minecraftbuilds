@@ -7,7 +7,7 @@ import {
   validBoolean,
 } from "./MysqlTypeValidation.js";
 import { validServerId } from "./MServerValidation.js";
-import { validFileNames } from "../file_operations/FileOperations.js";
+import { validFileNames } from "../utils/FileOperations.js";
 import type { ServerResponse } from "../Server.js";
 
 type Base = {
