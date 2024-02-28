@@ -1,5 +1,5 @@
 import { validVarchar } from "./MysqlTypeValidation.js";
-import type { ServerResponse } from "../Server.js";
+import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 
 function validUsername(username: unknown): ServerResponse {
   let response: ServerResponse = validVarchar(username, 1, 16);

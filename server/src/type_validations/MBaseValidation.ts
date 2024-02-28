@@ -8,7 +8,7 @@ import {
 } from "./MysqlTypeValidation.js";
 import { validServerId } from "./MServerValidation.js";
 import { validFileNames } from "../utils/FileOperations.js";
-import type { ServerResponse } from "../Server.js";
+import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 
 type Base = {
   server_id: number;

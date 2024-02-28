@@ -3,7 +3,7 @@ import { pool } from "../models/Pool.js";
 // Import validation functions
 import { validServerId } from "../type_validations/MServerValidation.js";
 // Import types
-import type { ServerResponse } from "../Server.js";
+import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 
 export async function getServerDescription(req: Request, res: Response): Promise<void> {
   const serverId = parseInt(req.params.serverId);

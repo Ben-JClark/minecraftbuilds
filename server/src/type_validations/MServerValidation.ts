@@ -1,5 +1,5 @@
 import { validUnsignedInt, IntUnsignedMax } from "./MysqlTypeValidation.js";
-import { ServerResponse } from "../Server.js";
+import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 
 function validServerId(serverId: unknown): ServerResponse {
   let response: ServerResponse = validUnsignedInt(serverId, IntUnsignedMax.UnsignedSmallIntMax);

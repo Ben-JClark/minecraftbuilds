@@ -1,4 +1,4 @@
-import type { ServerResponse } from "../Server.js";
+import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 
 /**
  * Defines the max values of Unsigned Integers MySQL supports

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { pool } from "../models/Pool.js";
 // Import types
-import type { ServerResponse } from "../Server.js";
+import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 
 export async function getServers(req: Request, res: Response): Promise<void> {
   let response: ServerResponse = {

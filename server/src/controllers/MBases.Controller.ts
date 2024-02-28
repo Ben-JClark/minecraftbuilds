@@ -6,7 +6,7 @@ import { renameImages } from "../utils/FileOperations.js";
 import { validServerId } from "../type_validations/MServerValidation.js";
 import { validBase } from "../type_validations/MBaseValidation.js";
 // Import types
-import type { ServerResponse } from "../Server.js";
+import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 import type { Base } from "../type_validations/MBaseValidation.js";
 
 export async function getBases(req: Request, res: Response): Promise<void> {
