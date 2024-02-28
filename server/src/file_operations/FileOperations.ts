@@ -8,7 +8,7 @@ import type { ServerResponse } from "../type_validations/MysqlTypeValidation.js"
 import multer from "multer";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const imagePath = path.resolve(__dirname, "../uploads/");
+const imagePath = path.resolve(__dirname, "../../public/images/");
 const multerInstance = multer({ dest: imagePath });
 
 /**
@@ -31,14 +31,11 @@ async function renameImages(
   if (currNames.length === newNames.length) {
     try {
       const renamePromises = currNames.map(async (currName: string, i: number) => {
-        const currPath = path.resolve(__dirname, `../uploads/${currName}`);
-        const newPath = path.resolve(__dirname, `../uploads/${imageFor}-${newNames[i]}.png`);
-        console.log();
+        const currPath = path.resolve(__dirname, `../../public/images/${currName}`);
+        const newPath = path.resolve(__dirname, `../../public/images/${imageFor}-${newNames[i]}.png`);
         return rename(currPath, newPath);
       });
       await Promise.all(renamePromises);
-      // All files renamed successfully
-      console.log(`renamed ${currNames.length} files`);
       response.success = true;
     } catch (error) {
       console.log("Error renaming files: ", error);

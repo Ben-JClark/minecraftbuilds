@@ -29,7 +29,7 @@ const app: Express = express();
 app.use(cors());
 app.use(morgan("dev"));
 
-const uploadDir = path.join(__dirname, "../uploads/");
+const uploadDir = path.join(__dirname, "../../public/images/");
 app.use(express.static(uploadDir));
 
 app.use("/servers", serverRouter);
