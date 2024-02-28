@@ -5,6 +5,8 @@ import { validServerId } from "../type_validations/MServerValidation.js";
 // Import types
 import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 
+import { get_description } from "../models/Home.model.js";
+
 export async function getServerDescription(req: Request, res: Response): Promise<void> {
   const serverId = parseInt(req.params.serverId);
 
@@ -14,9 +16,7 @@ export async function getServerDescription(req: Request, res: Response): Promise
     let connection;
     try {
       connection = await pool.getConnection();
-      // Query the db for the long description
-      const [MySQLResponse] = (await connection.query("CALL get_long_description(?)", [serverId])) as any;
-      response.data = MySQLResponse[0][0];
+      response.data = await get_description(connection, serverId);
       response.statusCode = 200;
     } catch (error) {
       response.success = false;

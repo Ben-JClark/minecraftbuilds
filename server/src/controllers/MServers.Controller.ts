@@ -3,6 +3,8 @@ import { pool } from "../models/Pool.js";
 // Import types
 import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 
+import { get_servers } from "../models/MServers.model.js";
+
 export async function getServers(req: Request, res: Response): Promise<void> {
   let response: ServerResponse = {
     success: false,
@@ -12,8 +14,7 @@ export async function getServers(req: Request, res: Response): Promise<void> {
   let connection;
   try {
     connection = await pool.getConnection();
-    const [MySQLResponse] = (await connection.query("CALL get_servers()")) as any;
-    response.data = MySQLResponse[0];
+    response.data = await get_servers(connection);
     response.statusCode = 200;
   } catch (error) {
     response.errorMessage = "Error getting the servers from the database";
