@@ -8,6 +8,8 @@ import { validBase } from "../type_validations/MBaseValidation.js";
 // Import types
 import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 import type { Base } from "../type_validations/MBaseValidation.js";
+// Import Models
+import { get_bases, add_base } from "../models/Base.model.js";
 
 export async function getBases(req: Request, res: Response): Promise<void> {
   // Validate the serverID
@@ -19,10 +21,7 @@ export async function getBases(req: Request, res: Response): Promise<void> {
     let connection;
     try {
       connection = await pool.getConnection();
-      // Get the bases
-      const [MySQLResponse] = (await connection.query("CALL get_bases(?)", [serverId])) as any;
-      // return the bases and status
-      response.data = MySQLResponse[0];
+      response.data = await get_bases(connection, serverId);
       response.statusCode = 200;
     } catch (error) {
       response.success = false;
@@ -66,24 +65,8 @@ export async function addBase(req: Request, res: Response): Promise<void> {
     let connection;
     try {
       connection = await pool.getConnection();
-      const [MySQLResponse]: any = await connection.query("CALL add_base(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
-        base.server_id,
-        base.owner_id,
-        base.base_name,
-        base.base_description,
-        base.x_coordinate,
-        base.z_coordinate,
-        base.for_sale,
-        base.purchase_price,
-        base.purchase_item,
-        base.purchase_method,
-        base.image_files.length,
-      ]); // MySQL returns the names the images should be renamed to
-
       // Obtain the new names
-      const newNames: string[] = MySQLResponse[0].map((obj: any) => {
-        return String(obj.image_name);
-      });
+      const newNames: string[] = await add_base(connection, base);
       // Rename the images
       response = await renameImages(base.image_files, newNames, "base");
       if (response.success) {
