@@ -3,6 +3,7 @@ import PasswordInput from "./form_comps/PasswordInput";
 import TextInput from "./form_comps/TextInput";
 import EmailInput from "./form_comps/EmailInput";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 // Imports related to parsing the server response
 import type { ServerResponse, ServerMessage } from "../ServerUtils";
@@ -102,6 +103,8 @@ function SignUp() {
 
           <button type="submit">Sign up</button>
         </form>
+        {`Already have an account? `}
+        <Link to={`/sign-in`}>Sign In</Link>
       </div>
     </>
   );
