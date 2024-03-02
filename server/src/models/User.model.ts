@@ -14,4 +14,16 @@ async function username_exists(connection: PoolConnection, username: string): Pr
   return Boolean(MySQLResponse[0][0].result);
 }
 
-export { create_user, email_exists, username_exists };
+type Credentials = {
+  id: number;
+  password_salt: Buffer;
+  password_hash: Buffer;
+};
+
+async function get_user_credentials(connection: PoolConnection, email: string): Promise<Credentials | undefined> {
+  const [MySQLResponse]: any = await connection.query("CALL get_user_credentials(?)", [email]);
+  return MySQLResponse[0][0];
+}
+
+export { create_user, email_exists, username_exists, get_user_credentials };
+export type { Credentials };

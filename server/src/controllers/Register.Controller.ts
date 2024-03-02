@@ -7,18 +7,10 @@ import { makeErrRes } from "../utils/ServerResponseUtils.js";
 
 // Import validation functions
 import { validUsername, validEmail, validPassword } from "../type_validations/AuthValidation.js";
+import { hashPassword } from "../utils/AuthUtils.js";
 
 // Import functions to query the db
 import { create_user, email_exists, username_exists } from "../models/User.model.js";
-
-async function hashPassword(password: string, salt: Buffer): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    crypto.pbkdf2(password, salt, 310000, 32, "sha256", (err, hash) => {
-      if (err) reject(err);
-      else resolve(hash);
-    });
-  });
-}
 
 export async function createUser(req: Request, res: Response): Promise<void> {
   const username: string = req.body?.username;
