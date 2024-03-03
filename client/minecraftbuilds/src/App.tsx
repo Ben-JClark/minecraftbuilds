@@ -8,6 +8,7 @@ import SignUp from "./components/SignUp";
 import ServerPage from "./components/server_comps/ServerPage";
 // This styling will style pages for all components
 import "./styling/PageStyle.css";
+import "./styling/App.css";
 
 function App() {
   return (

@@ -1,0 +1,17 @@
+/* @font-face {
+  font-family: minecraft-regular;
+  src: url("../../fonts/minecraft-regular.otf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: minecraft-header;
+  src: url("../../fonts/minecraft-header.ttf");
+  font-weight: normal;
+  font-style: normal;
+} */
+
+:root {
+  font-family: sans-serif;
+}

@@ -4,6 +4,7 @@
 
 .page {
   grid-area: page;
+  background-color: #dad7cdff;
   display: grid;
   grid-template-areas: "options" "content";
 }
@@ -21,7 +22,7 @@
 }
 
 .sidebar {
-  background-color: lightgray;
+  background-color: #a3b18aff;
 }
 
 /* Mobile */
