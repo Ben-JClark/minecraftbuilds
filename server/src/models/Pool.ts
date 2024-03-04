@@ -15,4 +15,32 @@ const poolConfig: PoolOptions = {
 
 const pool: Pool = mysql.createPool(poolConfig);
 
-export { pool };
+/* Setup the express session store */
+
+import session from "express-session";
+import MySQLSessionStore from "express-mysql-session";
+const MySQLStore = MySQLSessionStore(session as any);
+
+const sessionStore = new MySQLStore(
+  {
+    clearExpired: true,
+    schema: {
+      tableName: "sessions",
+      columnNames: {
+        session_id: "session_id",
+        expires: "expires",
+        data: "data",
+      },
+    },
+  },
+  pool as any
+);
+
+const sessionOptions: session.SessionOptions = {
+  secret: process.env.cookie_secret!,
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false,
+};
+
+export { pool, sessionStore, sessionOptions };
