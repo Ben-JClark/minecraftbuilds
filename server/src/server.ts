@@ -13,7 +13,13 @@ import serverRouter from "./routes/MServer.Routes.js";
 
 const app: Express = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "DELETE", "OPTIONS", "HEAD"],
+    credentials: true,
+  })
+);
 app.use(morgan("dev"));
 
 const uploadDir = path.join(__dirname, "../../public/images/");

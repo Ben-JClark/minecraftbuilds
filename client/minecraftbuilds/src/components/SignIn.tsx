@@ -32,12 +32,13 @@ function SignIn() {
     e.preventDefault();
     try {
       const postResponse = await axios.post("http://localhost:5000/auth/signin", formData, {
+        withCredentials: true,
         headers: {
           "Content-Type": "application/json",
         },
       });
-      const response: ServerResponse = postResponse.data;
-      setServerMessage(parseServerMessage(response));
+      //const response: ServerResponse = postResponse.data;
+      //setServerMessage(parseServerMessage(response));
     } catch (error: any) {
       setServerMessage(parseServerMessage(error?.response?.data));
     }

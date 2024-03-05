@@ -1,5 +1,6 @@
 import express from "express";
 import { multerInstance } from "../utils/FileOperations.js";
+import { isAuthenticated } from "../utils/AuthUtils.js";
 
 // Import controllers
 import { getServers } from "../controllers/MServers.Controller.js";
@@ -16,6 +17,6 @@ router.get("/:serverId/home", getServerDescription);
 
 /* Minecraft server base routes */
 router.get("/:serverId/bases", getBases);
-router.post("/:serverId/bases", multerInstance.array("image_files", 5), addBase);
+router.post("/:serverId/bases", isAuthenticated, multerInstance.array("image_files", 5), addBase);
 
 export default router;

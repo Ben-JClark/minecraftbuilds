@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { pool } from "../models/Pool.js";
 import crypto from "crypto";
 import { makeErrRes } from "../utils/ServerResponseUtils.js";
@@ -15,7 +15,16 @@ import { hashPassword } from "../utils/AuthUtils.js";
 // Import functions to query the db
 import { get_user_credentials } from "../models/User.model.js";
 
-export async function signinUser(req: Request, res: Response): Promise<void> {
+declare module "express-session" {
+  interface SessionData {
+    user: {
+      id: number;
+      email: string;
+    } | null;
+  }
+}
+
+export async function signinUser(req: Request, res: Response, next: NextFunction): Promise<void> {
   const email: string = req.body?.email;
   const password: string = req.body?.password;
 
@@ -37,7 +46,21 @@ export async function signinUser(req: Request, res: Response): Promise<void> {
           const hash: Buffer = await hashPassword(password, credentials.password_salt);
           if (crypto.timingSafeEqual(hash, credentials.password_hash)) {
             console.log("Correct username and password");
+
             // TODO: Create a session and send back a session id
+            // req.session.regenerate(function (err) {
+            // if (err) next(err);
+            // store user information in session, typically a user id
+            req.session.user = { id: credentials.id, email: email };
+
+            console.log("req.session.user: ", req.session.user, " req.body.user: ", req.body.user);
+
+            // Ensure session is saved
+            // req.session.save(function (err) {
+            //   if (err) return next(err);
+            // });
+            // });
+
             response.statusCode = 201;
           } else {
             // Incorrect password
@@ -58,6 +81,26 @@ export async function signinUser(req: Request, res: Response): Promise<void> {
       }
     }
   }
+  if (response.statusCode === 201) {
+    res.send(req.session.id);
+  } else {
+    res.status(response.statusCode).json(response);
+  }
+}
 
-  res.status(response.statusCode).json(response);
+/**
+ * Clear the user from the session object and save, ensuring re-using the old session id does not have a logged in user
+ */
+export async function signout(req: Request, res: Response, next: NextFunction): Promise<void> {
+  req.session.user = null;
+  req.session.save(function (err) {
+    if (err) next(err);
+
+    //regenerate the session, guarding agains forms of session fixation
+    req.session.regenerate(function (err) {
+      if (err) next(err);
+      const response: ServerResponse = { success: true, statusCode: 204 };
+      res.status(response.statusCode).json(response);
+    });
+  });
 }
