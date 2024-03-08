@@ -1,48 +1,46 @@
-import { Request, Response } from "express";
-import { pool } from "../models/Pool.js";
-// Import file operation functions
+import { NextFunction, Request, Response } from "express";
+import { getConnection } from "../models/Pool.js";
 import { renameImages } from "../utils/FileOperations.js";
-// Import validation functions
 import { validServerId } from "../type_validations/MServerValidation.js";
 import { validBase } from "../type_validations/MBaseValidation.js";
-// Import types
-import type { ServerResponse } from "../utils/ServerResponseUtils.js";
 import type { Base } from "../type_validations/MBaseValidation.js";
-// Import Models
 import { get_bases, add_base } from "../models/Base.model.js";
 
-import { makeErrRes } from "../utils/ServerResponseUtils.js";
-
-export async function getBases(req: Request, res: Response): Promise<void> {
+/**
+ * Sends a list of minecraft bases from a server
+ * @param req contains the server id in the params
+ */
+export async function getBases(req: Request, res: Response, next: NextFunction): Promise<void> {
   // Validate the serverID
   const serverId = parseInt(req.params.serverId);
-  let response: ServerResponse = validServerId(serverId);
-
-  // If serverId is valid, get the bases
-  if (response.success === true) {
-    let connection;
-    try {
-      connection = await pool.getConnection();
-      response.data = await get_bases(connection, serverId);
-      response.statusCode = 200;
-    } catch (error) {
-      response.success = false;
-      response.errorMessage = "Error getting the list of bases";
-    } finally {
-      if (connection !== undefined) {
-        connection.release();
-      }
-    }
+  try {
+    validServerId(serverId);
+  } catch (error) {
+    return next(error);
   }
 
-  // Send a response back to the client
-  res.status(response.statusCode).json(response);
+  let connection;
+  try {
+    connection = await getConnection();
+  } catch (err) {
+    return next(err);
+  }
+
+  try {
+    const bases: Base[] = await get_bases(connection, serverId);
+    res.status(200).json(bases);
+  } finally {
+    connection.release();
+  }
 }
 
-export async function addBase(req: Request, res: Response): Promise<void> {
-  let response: ServerResponse;
-
+/**
+ * Inserts a new minecraft base, base image names, and stores the base images
+ * @param req contains the session, server id in params, base properties in the body, and base images in files
+ */
+export async function addBase(req: Request, res: Response, next: NextFunction): Promise<void> {
   if (req.session.user) {
+    // TODO: use isAuthenticated middleware in routes
     const ownerId = req.session.user.id;
 
     // Create the base object
@@ -63,33 +61,24 @@ export async function addBase(req: Request, res: Response): Promise<void> {
       image_files: fileNames,
     };
 
-    // Validate the base object
-    response = validBase(base);
-    if (response.success === true) {
-      // Upload the base object
-      let connection;
-      try {
-        connection = await pool.getConnection();
-        // Obtain the new names
-        const newNames: string[] = await add_base(connection, base);
-        // Rename the images
-        response = await renameImages(base.image_files, newNames, "base");
-        if (response.success) {
-          response.statusCode = 201;
-        }
-      } catch (error) {
-        response.success = false;
-        response.errorMessage = "Could not upload the base to the database";
-      } finally {
-        if (connection !== undefined) {
-          connection.release();
-        }
-      }
-    }
-  } else {
-    response = makeErrRes(401, undefined, "You must sign in to upload a base");
-  }
+    validBase(base);
 
-  // Send a response back to the client
-  res.status(response.statusCode).json(response);
+    // Upload the base object
+    let connection;
+    try {
+      connection = await getConnection();
+    } catch (err) {
+      return next(err);
+    }
+
+    try {
+      // Obtain the new names
+      const newNames: string[] = await add_base(connection, base);
+      // Rename the images
+      await renameImages(base.image_files, newNames, "base");
+      res.status(201).send();
+    } finally {
+      connection.release();
+    }
+  }
 }

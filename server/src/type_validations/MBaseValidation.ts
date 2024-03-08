@@ -8,7 +8,8 @@ import {
 } from "./MysqlTypeValidation.js";
 import { validServerId } from "./MServerValidation.js";
 import { validFileNames } from "../utils/FileOperations.js";
-import type { ServerResponse } from "../utils/ServerResponseUtils.js";
+
+import { CustomError } from "../utils/CustomError.js";
 
 type Base = {
   server_id: number;
@@ -24,62 +25,99 @@ type Base = {
   image_files: string[]; // Names of the files
 };
 
-function validBase(base: Base): ServerResponse {
-  let response: ServerResponse = validServerId(base.server_id);
-  if (response.success) {
-    response = validUnsignedInt(base.owner_id, IntUnsignedMax.UnsignedSmallIntMax);
-    if (response.success) {
-      response = validVarchar(base.base_name, 1, 32);
-      if (response.success) {
-        response = validVarchar(base.base_description, 0, 1000);
-        if (response.success) {
-          response = validSignedInt(base.x_coordinate, IntSignedMax.SignedMediumIntMax);
-          if (response.success) {
-            response = validSignedInt(base.z_coordinate, IntSignedMax.SignedMediumIntMax);
-            if (response.success) {
-              response = validBoolean(base.for_sale);
-              if (response.success) {
-                response = validUnsignedInt(base.purchase_price, IntUnsignedMax.UnsignedSmallIntMax);
-                if (response.success) {
-                  response = validVarchar(base.purchase_item, 0, 41);
-                  if (response.success) {
-                    response = validVarchar(base.purchase_method, 0, 255);
-                    if (response.success) {
-                      response = validFileNames(base.image_files, 1, 5);
-                      if (response.success) {
-                        // response is already valid
-                      } else {
-                        response.invalidFeild = "image_files";
+/**
+ * Validates the base object passed
+ * Throws a CustomError(400,"feild","message")
+ * @param base
+ */
+function validBase(base: Base): void {
+  try {
+    validServerId(base.server_id);
+    try {
+      validUnsignedInt(base.owner_id, IntUnsignedMax.UnsignedSmallIntMax);
+      try {
+        validVarchar(base.base_name, 1, 32);
+        try {
+          validVarchar(base.base_description, 0, 1000);
+          try {
+            validSignedInt(base.x_coordinate, IntSignedMax.SignedMediumIntMax);
+            try {
+              validSignedInt(base.z_coordinate, IntSignedMax.SignedMediumIntMax);
+              try {
+                validBoolean(base.for_sale);
+                try {
+                  validUnsignedInt(base.purchase_price, IntUnsignedMax.UnsignedSmallIntMax);
+                  try {
+                    validVarchar(base.purchase_item, 0, 41);
+                    try {
+                      validVarchar(base.purchase_method, 0, 255);
+                      try {
+                        validFileNames(base.image_files, 1, 5);
+                      } catch (err: unknown) {
+                        throw new CustomError(
+                          400,
+                          "image_files",
+                          err instanceof CustomError ? err.message : "something went wrong"
+                        );
                       }
-                    } else {
-                      response.invalidFeild = "purchase_method";
+                    } catch (err: unknown) {
+                      throw new CustomError(
+                        400,
+                        "purchase_method",
+                        err instanceof CustomError ? err.message : "something went wrong"
+                      );
                     }
-                  } else {
-                    response.invalidFeild = "purchase_item";
+                  } catch (err: unknown) {
+                    throw new CustomError(
+                      400,
+                      "purchase_item",
+                      err instanceof CustomError ? err.message : "something went wrong"
+                    );
                   }
-                } else {
-                  response.invalidFeild = "purchase_price";
+                } catch (err: unknown) {
+                  throw new CustomError(
+                    400,
+                    "purchase_price",
+                    err instanceof CustomError ? err.message : "something went wrong"
+                  );
                 }
-              } else {
-                response.invalidFeild = "for_sale";
+              } catch (err: unknown) {
+                throw new CustomError(
+                  400,
+                  "for_sale",
+                  err instanceof CustomError ? err.message : "something went wrong"
+                );
               }
-            } else {
-              response.invalidFeild = "z_coordinate";
+            } catch (err: unknown) {
+              throw new CustomError(
+                400,
+                "z_coordinate",
+                err instanceof CustomError ? err.message : "something went wrong"
+              );
             }
-          } else {
-            response.invalidFeild = "x_coordinate";
+          } catch (err: unknown) {
+            throw new CustomError(
+              400,
+              "x_coordinate",
+              err instanceof CustomError ? err.message : "something went wrong"
+            );
           }
-        } else {
-          response.invalidFeild = "base_description";
+        } catch (err: unknown) {
+          throw new CustomError(
+            400,
+            "base_description",
+            err instanceof CustomError ? err.message : "something went wrong"
+          );
         }
-      } else {
-        response.invalidFeild = "base_name";
+      } catch (err: unknown) {
+        throw new CustomError(400, "base_name", err instanceof CustomError ? err.message : "something went wrong");
       }
-    } else {
-      response.invalidFeild = "owner_id";
+    } catch (err: unknown) {
+      throw new CustomError(400, "owner_id", err instanceof CustomError ? err.message : "something went wrong");
     }
+  } catch (err: unknown) {
+    throw new CustomError(400, "server_id", err instanceof CustomError ? err.message : "something went wrong");
   }
-  return response;
 }
 
 export { validBase };

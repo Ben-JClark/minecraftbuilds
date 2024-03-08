@@ -1,28 +1,21 @@
-import { Request, Response } from "express";
-import { pool } from "../models/Pool.js";
-// Import types
-import type { ServerResponse } from "../utils/ServerResponseUtils.js";
-
+import { NextFunction, Request, Response } from "express";
+import { getConnection } from "../models/Pool.js";
 import { get_servers } from "../models/MServers.model.js";
 
-export async function getServers(req: Request, res: Response): Promise<void> {
-  let response: ServerResponse = {
-    success: false,
-    statusCode: 500,
-  };
-
+/**
+ * Sends a list of minecraft servers from the database as a json object
+ */
+export async function getServers(req: Request, res: Response, next: NextFunction): Promise<void> {
   let connection;
   try {
-    connection = await pool.getConnection();
-    response.data = await get_servers(connection);
-    response.statusCode = 200;
-  } catch (error) {
-    response.errorMessage = "Error getting the servers from the database";
-  } finally {
-    if (connection !== undefined) {
-      connection.release();
-    }
+    connection = await getConnection();
+  } catch (err) {
+    return next(err);
   }
-
-  res.status(response.statusCode).json(response);
+  try {
+    const servers = await get_servers(connection);
+    res.status(200).json(servers);
+  } finally {
+    connection.release();
+  }
 }

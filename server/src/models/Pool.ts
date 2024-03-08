@@ -1,4 +1,6 @@
 import mysql, { Pool, PoolOptions } from "mysql2/promise";
+import type { PoolConnection } from "mysql2/promise";
+import { CustomError } from "../utils/CustomError.js";
 import * as dotenv from "dotenv";
 dotenv.config({ path: ".env" });
 
@@ -43,4 +45,13 @@ const sessionOptions: session.SessionOptions = {
   saveUninitialized: false,
 };
 
-export { pool, sessionStore, sessionOptions };
+async function getConnection(): Promise<PoolConnection> {
+  try {
+    const connection: PoolConnection = await pool.getConnection();
+    return connection;
+  } catch (err) {
+    throw new CustomError(500, null, "Can't connect to the database");
+  }
+}
+
+export { getConnection, sessionStore, sessionOptions };

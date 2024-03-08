@@ -1,58 +1,47 @@
-import type { PoolConnection } from "mysql2/promise";
-import type { ServerResponse } from "../utils/ServerResponseUtils.js";
-import { Request, Response } from "express";
-import { pool } from "../models/Pool.js";
+import { NextFunction, Request, Response } from "express";
+import { getConnection } from "../models/Pool.js";
 import crypto from "crypto";
-import { makeErrRes } from "../utils/ServerResponseUtils.js";
-
-// Import validation functions
+import { CustomError } from "../utils/CustomError.js";
 import { validUsername, validEmail, validPassword } from "../type_validations/AuthValidation.js";
 import { hashPassword } from "../utils/AuthUtils.js";
-
-// Import functions to query the db
 import { create_user, email_exists, username_exists } from "../models/User.model.js";
 
-export async function createUser(req: Request, res: Response): Promise<void> {
+/**
+ * Inserts a new user into the database with the credentials in the request body
+ * @param req contains the username, email, and password in the body
+ */
+export async function createUser(req: Request, res: Response, next: NextFunction): Promise<void> {
   const username: string = req.body?.username;
   const email: string = req.body?.email;
   const password: string = req.body?.password;
 
-  // Check username, email, and password are valid
-  let response: ServerResponse = validUsername(username);
-  if (response.success) {
-    response = validEmail(email);
-    if (response.success) {
-      response = validPassword(password);
-      if (response.success) {
-        // Create a connection
-        let connection: PoolConnection | undefined;
-        try {
-          connection = await pool.getConnection();
-          // Check username and email don't already exist
-          if (!(await username_exists(connection, username))) {
-            if (!(await email_exists(connection, email))) {
-              // Generate the salt and hash
-              const salt = crypto.randomBytes(16);
-              const hash = await hashPassword(password, salt);
-              await create_user(connection, username, email, salt, hash);
-              response.success = true;
-              response.statusCode = 201;
-            } else {
-              response = makeErrRes(409, "email", "that email already exists");
-            }
-          } else {
-            response = makeErrRes(409, "username", "that username already exists");
-          }
-        } catch (error) {
-          response = makeErrRes(500, undefined, "Error communicating with the database");
-        } finally {
-          if (connection !== undefined) {
-            connection.release();
-          }
-        }
-      }
-    }
+  validUsername(username);
+  validEmail(email);
+  validPassword(password);
+
+  let connection;
+  try {
+    connection = await getConnection();
+  } catch (err) {
+    return next(err);
   }
 
-  res.status(response.statusCode).json(response);
+  try {
+    // Check username and email don't already exist
+    if (!(await username_exists(connection, username))) {
+      if (!(await email_exists(connection, email))) {
+        // Generate the salt and hash
+        const salt = crypto.randomBytes(16);
+        const hash = await hashPassword(password, salt);
+        await create_user(connection, username, email, salt, hash);
+        res.status(201).send();
+      } else {
+        return next(new CustomError(409, "email", "that email already exists"));
+      }
+    } else {
+      return next(new CustomError(409, "username", "that username already exists"));
+    }
+  } finally {
+    connection.release();
+  }
 }

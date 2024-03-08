@@ -1,28 +1,43 @@
 import { validVarchar } from "./MysqlTypeValidation.js";
-import type { ServerResponse } from "../utils/ServerResponseUtils.js";
+import { CustomError } from "../utils/CustomError.js";
 
-function validUsername(username: unknown): ServerResponse {
-  let response: ServerResponse = validVarchar(username, 1, 16);
-  if (response.success === false) {
-    response.invalidFeild = "username";
+/**
+ * Validates the username
+ * Throws a CustomError(400,"username","message")
+ * @param username
+ */
+function validUsername(username: unknown): void {
+  try {
+    validVarchar(username, 1, 16);
+  } catch (err: unknown) {
+    throw new CustomError(400, "username", err instanceof CustomError ? err.message : "something went wrong");
   }
-  return response;
 }
 
-function validEmail(email: unknown): ServerResponse {
-  let response: ServerResponse = validVarchar(email, 3, 255);
-  if (response.success === false) {
-    response.invalidFeild = "email";
+/**
+ * Validates the email
+ * Throws a CustomError(400,"email","message")
+ * @param email
+ */
+function validEmail(email: unknown): void {
+  try {
+    validVarchar(email, 3, 255);
+  } catch (err: unknown) {
+    throw new CustomError(400, "email", err instanceof CustomError ? err.message : "something went wrong");
   }
-  return response;
 }
 
-function validPassword(password: unknown): ServerResponse {
-  let response: ServerResponse = validVarchar(password, 8, 255);
-  if (response.success === false) {
-    response.invalidFeild = "password";
+/**
+ * Validates the password
+ * Throws a CustomError(400,"password","message")
+ * @param password
+ */
+function validPassword(password: unknown): void {
+  try {
+    validVarchar(password, 8, 255);
+  } catch (err: unknown) {
+    throw new CustomError(400, "password", err instanceof CustomError ? err.message : "something went wrong");
   }
-  return response;
 }
 
 export { validUsername, validEmail, validPassword };
