@@ -1,4 +1,4 @@
-import "../styling/PrimNavBar.css";
+import "../../styling/PrimNavBar.css";
 import { Link } from "react-router-dom";
 
 function PrimNavBar() {

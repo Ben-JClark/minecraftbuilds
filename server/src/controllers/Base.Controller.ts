@@ -60,8 +60,11 @@ export async function addBase(req: Request, res: Response, next: NextFunction): 
       purchase_method: req.body.purchase_method,
       image_files: fileNames,
     };
-
-    validBase(base);
+    try {
+      validBase(base);
+    } catch (err) {
+      return next(err);
+    }
 
     // Upload the base object
     let connection;
@@ -75,7 +78,11 @@ export async function addBase(req: Request, res: Response, next: NextFunction): 
       // Obtain the new names
       const newNames: string[] = await add_base(connection, base);
       // Rename the images
-      await renameImages(base.image_files, newNames, "base");
+      try {
+        await renameImages(base.image_files, newNames, "base");
+      } catch (err) {
+        return next(err);
+      }
       res.status(201).send();
     } finally {
       connection.release();

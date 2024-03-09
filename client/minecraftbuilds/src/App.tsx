@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 // Navbars
-import PrimNavBar from "./components/PrimNavBar";
+import PrimNavBar from "./components/ui_components/PrimNavBar";
 // Pages
-import ServerBrowser from "./components/ServerBrowser";
+import ServerBrowser from "./components/ServerList";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import ServerPage from "./components/server_comps/ServerPage";

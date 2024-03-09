@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ServerListing from "./ServerListing";
 import "../styling/ServerBrowser.css";
+import axios, { AxiosError } from "axios";
 
-import axios from "axios";
-// Imports related to parsing the server response
-import type { ServerResponse, ServerMessage } from "../ServerUtils";
-import { parseServerMessage } from "../ServerUtils";
+type ServerError = {
+  feild: string | null;
+  message: string | null;
+};
 
 type Server = {
   serverName: string;
@@ -23,15 +23,14 @@ type Server = {
 
 function ServerBrowser() {
   const [serverList, setServerList] = useState<Server[]>([]);
-  const [serverMessage, setServerMessage] = useState<ServerMessage | undefined>(undefined);
+  const [serverError, setServerError] = useState<ServerError | null>(null);
 
   useEffect(() => {
     async function getServerList() {
       try {
         const getResponse = await axios.get("http://localhost:5000/servers/");
-        const response: ServerResponse = getResponse.data;
 
-        const serverData: Server[] = response.data.map((rawServerData: any) => ({
+        const serverData: Server[] = getResponse.data.map((rawServerData: any) => ({
           serverName: rawServerData.server_name,
           serverId: rawServerData.server_id,
           shortDescription: rawServerData.short_description,
@@ -44,8 +43,19 @@ function ServerBrowser() {
           userCount: rawServerData.user_count,
         }));
         setServerList(serverData);
-      } catch (error: any) {
-        setServerMessage(parseServerMessage(error?.response?.data));
+        setServerError(null);
+      } catch (error: unknown) {
+        // Check if the server sent back any information on the error
+        if (
+          error instanceof AxiosError &&
+          error.response &&
+          "feild" in error.response.data &&
+          "message" in error.response.data
+        ) {
+          setServerError({ feild: error.response.data.feild, message: error.response.data.message });
+        } else {
+          setServerError({ feild: null, message: "Something went wrong" });
+        }
       }
     }
 
@@ -59,9 +69,7 @@ function ServerBrowser() {
           <div className="options">options</div>
           <div className="content">
             {/* Display any errors*/}
-            {serverMessage?.success === false ? (
-              <div className="generic-error"> {serverMessage?.errorMessage} </div>
-            ) : null}
+            {serverError !== null ? <div className="generic-error"> {serverError.message} </div> : null}
 
             {/* Display all the servers */}
             <ul className="sl-container">

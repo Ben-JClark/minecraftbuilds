@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import type { ServerResponse, ServerMessage } from "../../ServerUtils";
-import { parseServerMessage } from "../../ServerUtils";
+import axios, { AxiosError } from "axios";
 import "../../styling/Home.css";
 
 interface Props {
@@ -9,21 +7,36 @@ interface Props {
   serverID: number;
 }
 
+type ServerError = {
+  feild: string | null;
+  message: string | null;
+};
+
 function Home({ serverName, serverID }: Props) {
   // Long description to be displayed
   const [longDescription, setLongDescription] = useState<string | undefined>(undefined);
   // The data received from a server response, used for error handling
-  const [serverMessage, setServerMessage] = useState<ServerMessage | undefined>(undefined);
+  const [serverError, setServerError] = useState<ServerError | null>(null);
 
   useEffect(() => {
     async function getLongDescription() {
       try {
         const getResponse = await axios.get(`http://localhost:5000/servers/${serverID}/home`);
-        const response: ServerResponse = getResponse.data;
-        setServerMessage(parseServerMessage(response));
-        setLongDescription(response.data.long_description);
+        setLongDescription(getResponse.data.long_description);
+        setServerError(null);
       } catch (error: any) {
-        setServerMessage(parseServerMessage(error?.response?.data));
+        // Check if the server sent back any information on the error
+        if (
+          error instanceof AxiosError &&
+          error.response &&
+          "feild" in error.response.data &&
+          "message" in error.response.data
+        ) {
+          setServerError({ feild: error.response.data.feild, message: error.response.data.message });
+        } else {
+          setServerError({ feild: null, message: "Something went wrong" });
+        }
+        console.error(error);
       }
     }
 
@@ -37,7 +50,11 @@ function Home({ serverName, serverID }: Props) {
       </div>
       <div className="content">
         {/* Display any errors*/}
-        {serverMessage?.success === false ? <div className="generic-error"> {serverMessage?.errorMessage} </div> : null}
+        {serverError !== null ? (
+          <div className="generic-error">
+            {serverError.feild} {serverError.message}{" "}
+          </div>
+        ) : null}
 
         <p> {longDescription}</p>
       </div>

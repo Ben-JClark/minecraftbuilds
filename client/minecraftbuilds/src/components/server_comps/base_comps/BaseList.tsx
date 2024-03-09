@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import BaseListing from "./BaseListing";
 import "../../../styling/Bases.css";
-import ButtonAddBase from "./ButtonAddBase";
+import LinkButton from "../../ui_components/LinkButton";
+import axios, { AxiosError } from "axios";
 
-import axios from "axios";
-// Imports related to parsing the server response
-import type { ServerResponse, ServerMessage } from "../../../ServerUtils";
-import { parseServerMessage } from "../../../ServerUtils";
+type ServerError = {
+  feild: string | null;
+  message: string | null;
+};
 
 interface Props {
   serverName: string;
@@ -31,16 +32,15 @@ type BasePreview = {
 
 function Bases({ serverName, serverID }: Props) {
   const [baseList, setBaseList] = useState<BasePreview[]>([]);
-  // The data received from a server response, used for error handling
-  const [serverMessage, setServerMessage] = useState<ServerMessage | undefined>(undefined);
+  const [serverError, setServerError] = useState<ServerError | null>(null);
 
   useEffect(() => {
     async function getBaseList() {
       try {
         const getResponse = await axios.get(`http://localhost:5000/servers/${serverID}/bases`);
-        const response: ServerResponse = getResponse.data;
+        // const response: ServerResponse = getResponse.data;
 
-        const list: BasePreview[] = response.data.map((baseData: any) => ({
+        const list: BasePreview[] = getResponse.data.map((baseData: any) => ({
           baseId: baseData.id,
           baseName: baseData.base_name,
           mainImageName: baseData.main_image_name,
@@ -56,9 +56,18 @@ function Bases({ serverName, serverID }: Props) {
           buyerName: baseData.buyer_username,
         }));
         setBaseList(list);
-        setServerMessage(parseServerMessage(response));
+        setServerError(null);
       } catch (error: any) {
-        setServerMessage(parseServerMessage(error?.response?.data));
+        if (
+          error instanceof AxiosError &&
+          error.response &&
+          "feild" in error.response.data &&
+          "message" in error.response.data
+        ) {
+          setServerError({ feild: error.response.data.feild, message: error.response.data.message });
+        } else {
+          setServerError({ feild: null, message: "Something went wrong" });
+        }
       }
     }
 
@@ -72,12 +81,13 @@ function Bases({ serverName, serverID }: Props) {
       </div>
       <div className="content">
         {/* Display any errors*/}
-        {serverMessage?.success === false ? <div className="generic-error"> {serverMessage?.errorMessage} </div> : null}
-
+        {serverError !== null ? (
+          <div className="generic-error">
+            {serverError.feild} {serverError.message}{" "}
+          </div>
+        ) : null}
+        <LinkButton buttonText="Add base" url={`/server/${serverName}/${serverID}/bases/add`} />
         <ul className="b-container">
-          <li className="b-item" key={"AddBaseListing"}>
-            <ButtonAddBase serverName={serverName} serverID={serverID} />
-          </li>
           {baseList.map((base: BasePreview) => (
             <li className="b-item" key={base.baseId}>
               <BaseListing base={base} />

@@ -1,5 +1,5 @@
-import type { Server } from "./ServerBrowser";
-import { Link, useNavigate } from "react-router-dom";
+import type { Server } from "./ServerList";
+import { useNavigate } from "react-router-dom";
 import "../styling/ServerListing.css";
 
 interface Props {

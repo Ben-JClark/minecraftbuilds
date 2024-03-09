@@ -1,4 +1,4 @@
-import type { BasePreview } from "./Bases";
+import type { BasePreview } from "./BaseList";
 import { timeSince } from "../../ServerListing";
 import "../../../styling/BaseListing.css";
 

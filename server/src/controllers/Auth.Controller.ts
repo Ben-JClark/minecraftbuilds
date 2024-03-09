@@ -24,11 +24,13 @@ export async function signinUser(req: Request, res: Response, next: NextFunction
   const email: string = req.body?.email;
   const password: string = req.body?.password;
 
-  console.log(`Signing in with email: ${email} and password: ${password}`);
-
   // Validate inputs
-  validEmail(email);
-  validPassword(password);
+  try {
+    validEmail(email);
+    validPassword(password);
+  } catch (err) {
+    return next(err);
+  }
 
   let connection;
   try {

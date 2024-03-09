@@ -9,7 +9,12 @@ import { get_description } from "../models/Home.model.js";
  */
 export async function getServerDescription(req: Request, res: Response, next: NextFunction): Promise<void> {
   const serverId = parseInt(req.params.serverId);
-  validServerId(serverId);
+
+  try {
+    validServerId(serverId);
+  } catch (err) {
+    return next(err);
+  }
 
   let connection;
   try {

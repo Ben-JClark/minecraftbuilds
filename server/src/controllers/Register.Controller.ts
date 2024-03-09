@@ -15,9 +15,13 @@ export async function createUser(req: Request, res: Response, next: NextFunction
   const email: string = req.body?.email;
   const password: string = req.body?.password;
 
-  validUsername(username);
-  validEmail(email);
-  validPassword(password);
+  try {
+    validUsername(username);
+    validEmail(email);
+    validPassword(password);
+  } catch (err) {
+    return next(err);
+  }
 
   let connection;
   try {

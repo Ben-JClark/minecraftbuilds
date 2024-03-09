@@ -33,90 +33,58 @@ type Base = {
 function validBase(base: Base): void {
   try {
     validServerId(base.server_id);
-    try {
-      validUnsignedInt(base.owner_id, IntUnsignedMax.UnsignedSmallIntMax);
-      try {
-        validVarchar(base.base_name, 1, 32);
-        try {
-          validVarchar(base.base_description, 0, 1000);
-          try {
-            validSignedInt(base.x_coordinate, IntSignedMax.SignedMediumIntMax);
-            try {
-              validSignedInt(base.z_coordinate, IntSignedMax.SignedMediumIntMax);
-              try {
-                validBoolean(base.for_sale);
-                try {
-                  validUnsignedInt(base.purchase_price, IntUnsignedMax.UnsignedSmallIntMax);
-                  try {
-                    validVarchar(base.purchase_item, 0, 41);
-                    try {
-                      validVarchar(base.purchase_method, 0, 255);
-                      try {
-                        validFileNames(base.image_files, 1, 5);
-                      } catch (err: unknown) {
-                        throw new CustomError(
-                          400,
-                          "image_files",
-                          err instanceof CustomError ? err.message : "something went wrong"
-                        );
-                      }
-                    } catch (err: unknown) {
-                      throw new CustomError(
-                        400,
-                        "purchase_method",
-                        err instanceof CustomError ? err.message : "something went wrong"
-                      );
-                    }
-                  } catch (err: unknown) {
-                    throw new CustomError(
-                      400,
-                      "purchase_item",
-                      err instanceof CustomError ? err.message : "something went wrong"
-                    );
-                  }
-                } catch (err: unknown) {
-                  throw new CustomError(
-                    400,
-                    "purchase_price",
-                    err instanceof CustomError ? err.message : "something went wrong"
-                  );
-                }
-              } catch (err: unknown) {
-                throw new CustomError(
-                  400,
-                  "for_sale",
-                  err instanceof CustomError ? err.message : "something went wrong"
-                );
-              }
-            } catch (err: unknown) {
-              throw new CustomError(
-                400,
-                "z_coordinate",
-                err instanceof CustomError ? err.message : "something went wrong"
-              );
-            }
-          } catch (err: unknown) {
-            throw new CustomError(
-              400,
-              "x_coordinate",
-              err instanceof CustomError ? err.message : "something went wrong"
-            );
-          }
-        } catch (err: unknown) {
-          throw new CustomError(
-            400,
-            "base_description",
-            err instanceof CustomError ? err.message : "something went wrong"
-          );
-        }
-      } catch (err: unknown) {
-        throw new CustomError(400, "base_name", err instanceof CustomError ? err.message : "something went wrong");
-      }
-    } catch (err: unknown) {
-      throw new CustomError(400, "owner_id", err instanceof CustomError ? err.message : "something went wrong");
-    }
   } catch (err: unknown) {
     throw new CustomError(400, "server_id", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validUnsignedInt(base.owner_id, IntUnsignedMax.UnsignedSmallIntMax);
+  } catch (err: unknown) {
+    throw new CustomError(400, "owner_id", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validVarchar(base.base_name, 1, 32);
+  } catch (err: unknown) {
+    throw new CustomError(400, "base_name", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validVarchar(base.base_description, 0, 1000);
+  } catch (err: unknown) {
+    throw new CustomError(400, "base_description", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validSignedInt(base.x_coordinate, IntSignedMax.SignedMediumIntMax);
+  } catch (err: unknown) {
+    throw new CustomError(400, "x_coordinate", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validSignedInt(base.z_coordinate, IntSignedMax.SignedMediumIntMax);
+  } catch (err: unknown) {
+    throw new CustomError(400, "z_coordinate", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validBoolean(base.for_sale);
+  } catch (err: unknown) {
+    throw new CustomError(400, "for_sale", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validUnsignedInt(base.purchase_price, IntUnsignedMax.UnsignedSmallIntMax);
+  } catch (err: unknown) {
+    throw new CustomError(400, "purchase_price", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validVarchar(base.purchase_item, 0, 41);
+  } catch (err: unknown) {
+    throw new CustomError(400, "purchase_item", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validVarchar(base.purchase_method, 0, 255);
+  } catch (err: unknown) {
+    throw new CustomError(400, "purchase_method", err instanceof CustomError ? err.message : "something went wrong");
+  }
+  try {
+    validFileNames(base.image_files, 1, 5);
+  } catch (err: unknown) {
+    throw new CustomError(400, "image_files", err instanceof CustomError ? err.message : "something went wrong");
   }
 }
 

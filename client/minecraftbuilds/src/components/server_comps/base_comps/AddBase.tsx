@@ -4,12 +4,13 @@ import TextInput from "../../form_comps/TextInput";
 import NumberInput from "../../form_comps/NumberInput";
 import TextAreaInput from "../../form_comps/TextAreaInput";
 import RadioInput from "../../form_comps/RadioInput";
-import { Link } from "react-router-dom";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import SuccessMessage from "../../ui_components/SuccessMessage";
 
-// Imports related to parsing the server response
-import type { ServerResponse, ServerMessage } from "../../../ServerUtils";
-import { parseServerMessage } from "../../../ServerUtils";
+type ServerError = {
+  feild: string | null;
+  message: string | null;
+};
 
 type baseFormData = {
   base_name: string;
@@ -40,7 +41,8 @@ function AddBase({ serverName, serverID }: Props) {
     purchase_method: "",
     image_files: [],
   });
-  const [serverMessage, setServerMessage] = useState<ServerMessage | undefined>(undefined);
+  const [serverError, setServerError] = useState<ServerError | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
 
   /**
    * Update the formdata to contain the value entered in the input
@@ -69,17 +71,26 @@ function AddBase({ serverName, serverID }: Props) {
         bodyFormData.append(`image_files`, file);
       });
 
-      const postResponse = await axios.post(`http://localhost:5000/servers/${serverID}/bases`, bodyFormData, {
+      await axios.post(`http://localhost:5000/servers/${serverID}/bases`, bodyFormData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("postResponse: ", postResponse);
-      const response: ServerResponse = postResponse.data;
-      setServerMessage(parseServerMessage(response));
+      setSuccess(true);
+      setServerError(null);
     } catch (error: any) {
-      setServerMessage(parseServerMessage(error?.response?.data));
+      setSuccess(false);
+      if (
+        error instanceof AxiosError &&
+        error.response &&
+        "feild" in error.response.data &&
+        "message" in error.response.data
+      ) {
+        setServerError({ feild: error.response.data.feild, message: error.response.data.message });
+      } else {
+        setServerError({ feild: null, message: "Something went wrong" });
+      }
     }
   }
 
@@ -90,24 +101,18 @@ function AddBase({ serverName, serverID }: Props) {
       </div>
       <div className="content">
         {/* Display a link back to the bases page if form is successfully submitted */}
-        {serverMessage?.success ? (
-          <div className="success-message">
-            <h1>Success</h1>
-            <p>Base added to the server</p>
-            <p>
-              Navigate back to the <Link to={`/server/${serverName}/${serverID}/bases`}>Bases Page</Link>
-            </p>
-          </div>
+        {success === true ? (
+          <SuccessMessage
+            message="You have successfully uploaded your base"
+            buttonText="View Bases"
+            url={`/server/${serverName}/${serverID}/bases`}
+          />
         ) : (
           <>
             {/* Display a generic error if no feild is invalid, else ask the user to correct it */}
-            {serverMessage?.success === false ? (
+            {serverError !== null ? (
               <div className="generic-error">
-                {serverMessage?.invalidFeild === undefined ? (
-                  <>{serverMessage.errorMessage}</>
-                ) : (
-                  <>Invalid input in the feild {serverMessage.invalidFeild}</>
-                )}
+                {serverError.feild} {serverError.message}{" "}
               </div>
             ) : null}
 
@@ -119,7 +124,7 @@ function AddBase({ serverName, serverID }: Props) {
                   max={32}
                   required={true}
                   onChange={handleChange}
-                  error={serverMessage?.invalidFeild === "base_name" ? serverMessage?.errorMessage : null}
+                  error={serverError?.feild === "base_name" ? serverError.message : null}
                 />
                 <p>Where is your base located?</p>
                 <NumberInput
@@ -129,7 +134,7 @@ function AddBase({ serverName, serverID }: Props) {
                   max={8388607}
                   min={-8388607}
                   onChange={handleChange}
-                  error={serverMessage?.invalidFeild === "x_coordinate" ? serverMessage?.errorMessage : null}
+                  error={serverError?.feild === "x_coordinate" ? serverError.message : null}
                 />
                 <NumberInput
                   label="Z"
@@ -138,7 +143,7 @@ function AddBase({ serverName, serverID }: Props) {
                   max={8388607}
                   min={-8388607}
                   onChange={handleChange}
-                  error={serverMessage?.invalidFeild === "z_coordinate" ? serverMessage?.errorMessage : null}
+                  error={serverError?.feild === "z_coordinate" ? serverError.message : null}
                 />
                 <TextAreaInput
                   label="Describe your base"
@@ -146,7 +151,7 @@ function AddBase({ serverName, serverID }: Props) {
                   max={1000}
                   required={false}
                   onChange={handleChange}
-                  error={serverMessage?.invalidFeild === "base_description" ? serverMessage?.errorMessage : null}
+                  error={serverError?.feild === "base_description" ? serverError.message : null}
                 />
               </section>
               <section>
@@ -157,7 +162,7 @@ function AddBase({ serverName, serverID }: Props) {
                   max={5}
                   onChange={handleChange}
                   formImageFiles={formData.image_files}
-                  error={serverMessage?.invalidFeild === "image_files" ? serverMessage?.errorMessage : null}
+                  error={serverError?.feild === "image_files" ? serverError.message : null}
                 />
               </section>
               <section>
@@ -179,9 +184,7 @@ function AddBase({ serverName, serverID }: Props) {
                   isChecked={formData.for_sale ? false : true}
                   onChange={handleChange}
                 />
-                <div className="input-error">
-                  {serverMessage?.invalidFeild === "for_sale" ? serverMessage?.errorMessage : null}
-                </div>
+                <div className="input-error">{serverError?.feild === "for_sale" ? serverError.message : null}</div>
 
                 {formData.for_sale ? (
                   <>
@@ -192,7 +195,7 @@ function AddBase({ serverName, serverID }: Props) {
                       max={65535}
                       min={0}
                       onChange={handleChange}
-                      error={serverMessage?.invalidFeild === "purchase_price" ? serverMessage?.errorMessage : null}
+                      error={serverError?.feild === "purchase_price" ? serverError.message : null}
                     />
 
                     <TextInput
@@ -201,7 +204,7 @@ function AddBase({ serverName, serverID }: Props) {
                       max={41}
                       required={false}
                       onChange={handleChange}
-                      error={serverMessage?.invalidFeild === "purchase_item" ? serverMessage?.errorMessage : null}
+                      error={serverError?.feild === "purchase_item" ? serverError.message : null}
                     />
 
                     <TextAreaInput
@@ -210,7 +213,7 @@ function AddBase({ serverName, serverID }: Props) {
                       max={255}
                       required={false}
                       onChange={handleChange}
-                      error={serverMessage?.invalidFeild === "purchase_method" ? serverMessage?.errorMessage : null}
+                      error={serverError?.feild === "purchase_method" ? serverError.message : null}
                     />
                   </>
                 ) : null}
