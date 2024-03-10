@@ -83,3 +83,15 @@ export async function signout(req: Request, res: Response, next: NextFunction): 
     });
   });
 }
+
+/**
+ * Send true or false back to the client indicating weather the user is authenticated
+ * @param req may have the session object
+ */
+export async function checkAuth(req: Request, res: Response): Promise<void> {
+  if (req.session.user) {
+    res.status(200).json({ authenticated: true });
+  } else {
+    res.status(200).json({ authenticated: false });
+  }
+}

@@ -57,7 +57,7 @@ function Bases({ serverName, serverID }: Props) {
         }));
         setBaseList(list);
         setServerError(null);
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (
           error instanceof AxiosError &&
           error.response &&
