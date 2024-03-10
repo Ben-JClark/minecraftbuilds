@@ -4,7 +4,7 @@ import TextInput from "./form_comps/TextInput";
 import EmailInput from "./form_comps/EmailInput";
 import axios, { AxiosError } from "axios";
 import { Link } from "react-router-dom";
-import SuccessMessage from "./ui_components/SuccessMessage";
+import MessageBox from "./ui_components/MessageBox";
 
 type ServerError = {
   feild: string | null;
@@ -45,6 +45,7 @@ function SignUp() {
     if (formData.password === confirmedPassword) {
       try {
         await axios.post(`http://localhost:5000/auth/signup`, formData, {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
@@ -54,13 +55,18 @@ function SignUp() {
       } catch (error: unknown) {
         // Check if the server sent back any information on the error
         setSuccess(false);
-        if (
-          error instanceof AxiosError &&
-          error.response &&
-          "feild" in error.response.data &&
-          "message" in error.response.data
-        ) {
-          setServerError({ feild: error.response.data.feild, message: error.response.data.message });
+        if (error instanceof AxiosError && error.response) {
+          // If its a 403, the user is already signed in, therefor cannot sign up
+          if (error.response.status === 403) {
+            setServerError({
+              feild: null,
+              message: "You can't sign up when you are signed in, you must sign out first",
+            });
+          } else if ("feild" in error.response.data && "message" in error.response.data) {
+            setServerError({ feild: error.response.data.feild, message: error.response.data.message });
+          } else {
+            setServerError({ feild: null, message: "Something went wrong" });
+          }
         } else {
           setServerError({ feild: null, message: "Something went wrong" });
         }
@@ -73,7 +79,7 @@ function SignUp() {
   return (
     <>
       {success === true ? (
-        <SuccessMessage
+        <MessageBox
           message="You have successfully signed up, now you can sign in"
           buttonText="Sign in"
           url="/sign-in"

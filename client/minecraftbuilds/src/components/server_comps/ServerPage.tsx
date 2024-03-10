@@ -7,7 +7,11 @@ import Farms from "./Farms";
 import Players from "./Players";
 import { Route, Routes, useParams } from "react-router-dom";
 
-function ServerPage() {
+interface Props {
+  isAuthenticated: boolean;
+}
+
+function ServerPage({ isAuthenticated }: Props) {
   // App.tsx loads this component with the path /server/:serverName/*
   // so obtain the server name from the url
   const { serverName, serverID } = useParams();
@@ -24,7 +28,10 @@ function ServerPage() {
               <Routes>
                 <Route path="/home" element={<Home serverName={serverName} serverID={id} />} />
                 <Route path="/bases" element={<Bases serverName={serverName} serverID={id} />} />
-                <Route path="/bases/add" element={<AddBase serverName={serverName} serverID={id} />} />
+                <Route
+                  path="/bases/add"
+                  element={<AddBase serverName={serverName} serverID={id} isAuthenticated={isAuthenticated} />}
+                />
                 <Route path="/shops" element={<Shops serverName={serverName} serverID={id} />} />
                 <Route path="/farms" element={<Farms serverName={serverName} serverID={id} />} />
                 <Route path="/players" element={<Players serverName={serverName} serverID={id} />} />

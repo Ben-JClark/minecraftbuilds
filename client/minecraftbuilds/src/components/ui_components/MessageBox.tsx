@@ -6,7 +6,7 @@ interface Props {
   url: string;
 }
 
-function SuccessMessage({ message, buttonText, url }: Props) {
+function MessageBox({ message, buttonText, url }: Props) {
   return (
     <>
       <p>{message}</p>
@@ -15,4 +15,4 @@ function SuccessMessage({ message, buttonText, url }: Props) {
   );
 }
 
-export default SuccessMessage;
+export default MessageBox;

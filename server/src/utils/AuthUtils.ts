@@ -5,16 +5,28 @@ import crypto from "crypto";
 /**
  * Middleware to check if the user is authorised. If authorised, next will be called.
  * If not authorised a CustomError(401, null, "Not Authorised") will be thrown
- * @param req
- * @param res
- * @param next
+ * @param req may contain the session object required
+ * @param next called if user is authenticated
  */
 export function isAuthenticated(req: Request, res: Response, next: NextFunction): void {
   if (req.session.user) {
-    console.log("user is authenticated with user object: ", req.session.user);
     next();
   } else {
     throw new CustomError(401, null, "Not Authorised");
+  }
+}
+
+/**
+ * Middleware to check if the user is NOT authorised. If NOT authorised, next will be called.
+ * If the use IS authorised a CustomError(401, null, "Already Authorised") will be thrown
+ * @param req may contain the session object required
+ * @param next called if user is NOT authenticated
+ */
+export function isNotAuthenticated(req: Request, res: Response, next: NextFunction): void {
+  if (req.session.user) {
+    throw new CustomError(403, null, "Already Authorised");
+  } else {
+    next();
   }
 }
 

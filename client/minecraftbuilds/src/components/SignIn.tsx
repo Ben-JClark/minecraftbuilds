@@ -3,7 +3,7 @@ import PasswordInput from "./form_comps/PasswordInput";
 import EmailInput from "./form_comps/EmailInput";
 import axios, { AxiosError } from "axios";
 import { Link } from "react-router-dom";
-import SuccessMessage from "./ui_components/SuccessMessage";
+import MessageBox from "./ui_components/MessageBox";
 
 type ServerError = {
   feild: string | null;
@@ -15,7 +15,11 @@ type SignInData = {
   password: string;
 };
 
-function SignIn() {
+interface Props {
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
+}
+
+function SignIn({ setIsAuthenticated }: Props) {
   const [formData, setFormData] = useState<SignInData>({
     email: "",
     password: "",
@@ -41,16 +45,19 @@ function SignIn() {
       });
       setSuccess(true);
       setServerError(null);
+      setIsAuthenticated(true);
     } catch (error: unknown) {
       // Check if the server sent back any information on the error
       setSuccess(false);
-      if (
-        error instanceof AxiosError &&
-        error.response &&
-        "feild" in error.response.data &&
-        "message" in error.response.data
-      ) {
-        setServerError({ feild: error.response.data.feild, message: error.response.data.message });
+      if (error instanceof AxiosError && error.response) {
+        // If its a 403, the user is already signed in, therefor cannot sign in again
+        if (error.response.status === 403) {
+          setServerError({ feild: null, message: "You are already signed in, you must sign out to sign in again" });
+        } else if ("feild" in error.response.data && "message" in error.response.data) {
+          setServerError({ feild: error.response.data.feild, message: error.response.data.message });
+        } else {
+          setServerError({ feild: null, message: "Something went wrong" });
+        }
       } else {
         setServerError({ feild: null, message: "Something went wrong" });
       }
@@ -61,7 +68,7 @@ function SignIn() {
   return (
     <>
       {success === true ? (
-        <SuccessMessage message="You have successfully signed in" buttonText="Browse Servers" url="/" />
+        <MessageBox message="You have successfully signed in" buttonText="Browse Servers" url="/" />
       ) : (
         <>
           <div className="options">

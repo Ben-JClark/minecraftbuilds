@@ -5,7 +5,7 @@ import NumberInput from "../../form_comps/NumberInput";
 import TextAreaInput from "../../form_comps/TextAreaInput";
 import RadioInput from "../../form_comps/RadioInput";
 import axios, { AxiosError } from "axios";
-import SuccessMessage from "../../ui_components/SuccessMessage";
+import MessageBox from "../../ui_components/MessageBox";
 
 type ServerError = {
   feild: string | null;
@@ -27,9 +27,10 @@ type baseFormData = {
 interface Props {
   serverName: string;
   serverID: number;
+  isAuthenticated: boolean;
 }
 
-function AddBase({ serverName, serverID }: Props) {
+function AddBase({ serverName, serverID, isAuthenticated }: Props) {
   const [formData, setFormData] = useState<baseFormData>({
     base_name: "",
     base_description: "",
@@ -100,128 +101,135 @@ function AddBase({ serverName, serverID }: Props) {
         <h1>Add your base to {serverName}</h1>
       </div>
       <div className="content">
-        {/* Display a link back to the bases page if form is successfully submitted */}
-        {success === true ? (
-          <SuccessMessage
-            message="You have successfully uploaded your base"
-            buttonText="View Bases"
-            url={`/server/${serverName}/${serverID}/bases`}
-          />
+        {/* Check if the user is authenticated */}
+        {isAuthenticated === false ? (
+          <MessageBox message="You must sign in to upload a base" buttonText="Sign In" url="/sign-in" />
         ) : (
           <>
-            {/* Display a generic error if no feild is invalid, else ask the user to correct it */}
-            {serverError !== null ? (
-              <div className="generic-error">
-                {serverError.feild} {serverError.message}{" "}
-              </div>
-            ) : null}
-
-            <form onSubmit={handleSubmit}>
-              <section>
-                <TextInput
-                  label="Give your base a name"
-                  feild="base_name"
-                  max={32}
-                  required={true}
-                  onChange={handleChange}
-                  error={serverError?.feild === "base_name" ? serverError.message : null}
-                />
-                <p>Where is your base located?</p>
-                <NumberInput
-                  label="X"
-                  feild="x_coordinate"
-                  required={false}
-                  max={8388607}
-                  min={-8388607}
-                  onChange={handleChange}
-                  error={serverError?.feild === "x_coordinate" ? serverError.message : null}
-                />
-                <NumberInput
-                  label="Z"
-                  feild="z_coordinate"
-                  required={false}
-                  max={8388607}
-                  min={-8388607}
-                  onChange={handleChange}
-                  error={serverError?.feild === "z_coordinate" ? serverError.message : null}
-                />
-                <TextAreaInput
-                  label="Describe your base"
-                  feild="base_description"
-                  max={1000}
-                  required={false}
-                  onChange={handleChange}
-                  error={serverError?.feild === "base_description" ? serverError.message : null}
-                />
-              </section>
-              <section>
-                <ImageInput
-                  label="Upload some screenshots of your base"
-                  feild={"image_files"}
-                  required={false}
-                  max={5}
-                  onChange={handleChange}
-                  formImageFiles={formData.image_files}
-                  error={serverError?.feild === "image_files" ? serverError.message : null}
-                />
-              </section>
-              <section>
-                <div>Is your base for sale?</div>
-
-                <RadioInput
-                  label="Yes"
-                  name="for_sale"
-                  feild="for_sale_yes"
-                  value={true}
-                  isChecked={formData.for_sale ? true : false}
-                  onChange={handleChange}
-                />
-                <RadioInput
-                  label="No"
-                  name="for_sale"
-                  feild="for_sale_no"
-                  value={false}
-                  isChecked={formData.for_sale ? false : true}
-                  onChange={handleChange}
-                />
-                <div className="input-error">{serverError?.feild === "for_sale" ? serverError.message : null}</div>
-
-                {formData.for_sale ? (
-                  <>
-                    <NumberInput
-                      label="How much will your base cost?"
-                      feild="purchase_price"
-                      required={false}
-                      max={65535}
-                      min={0}
-                      onChange={handleChange}
-                      error={serverError?.feild === "purchase_price" ? serverError.message : null}
-                    />
-
-                    <TextInput
-                      label="What is the currency?"
-                      feild="purchase_item"
-                      max={41}
-                      required={false}
-                      onChange={handleChange}
-                      error={serverError?.feild === "purchase_item" ? serverError.message : null}
-                    />
-
-                    <TextAreaInput
-                      label="Enter your payment instructions"
-                      feild="purchase_method"
-                      max={255}
-                      required={false}
-                      onChange={handleChange}
-                      error={serverError?.feild === "purchase_method" ? serverError.message : null}
-                    />
-                  </>
+            {/* Display a link back to the bases page if form is successfully submitted */}
+            {success === true ? (
+              <MessageBox
+                message="You have successfully uploaded your base"
+                buttonText="View Bases"
+                url={`/server/${serverName}/${serverID}/bases`}
+              />
+            ) : (
+              <>
+                {/* Display a generic error if no feild is invalid, else ask the user to correct it */}
+                {serverError !== null ? (
+                  <div className="generic-error">
+                    {serverError.feild} {serverError.message}{" "}
+                  </div>
                 ) : null}
-              </section>
-              <section>
-                <button type="submit">Upload base</button>
-              </section>
-            </form>
+
+                <form onSubmit={handleSubmit}>
+                  <section>
+                    <TextInput
+                      label="Give your base a name"
+                      feild="base_name"
+                      max={32}
+                      required={true}
+                      onChange={handleChange}
+                      error={serverError?.feild === "base_name" ? serverError.message : null}
+                    />
+                    <p>Where is your base located?</p>
+                    <NumberInput
+                      label="X"
+                      feild="x_coordinate"
+                      required={false}
+                      max={8388607}
+                      min={-8388607}
+                      onChange={handleChange}
+                      error={serverError?.feild === "x_coordinate" ? serverError.message : null}
+                    />
+                    <NumberInput
+                      label="Z"
+                      feild="z_coordinate"
+                      required={false}
+                      max={8388607}
+                      min={-8388607}
+                      onChange={handleChange}
+                      error={serverError?.feild === "z_coordinate" ? serverError.message : null}
+                    />
+                    <TextAreaInput
+                      label="Describe your base"
+                      feild="base_description"
+                      max={1000}
+                      required={false}
+                      onChange={handleChange}
+                      error={serverError?.feild === "base_description" ? serverError.message : null}
+                    />
+                  </section>
+                  <section>
+                    <ImageInput
+                      label="Upload some screenshots of your base"
+                      feild={"image_files"}
+                      required={false}
+                      max={5}
+                      onChange={handleChange}
+                      formImageFiles={formData.image_files}
+                      error={serverError?.feild === "image_files" ? serverError.message : null}
+                    />
+                  </section>
+                  <section>
+                    <div>Is your base for sale?</div>
+
+                    <RadioInput
+                      label="Yes"
+                      name="for_sale"
+                      feild="for_sale_yes"
+                      value={true}
+                      isChecked={formData.for_sale ? true : false}
+                      onChange={handleChange}
+                    />
+                    <RadioInput
+                      label="No"
+                      name="for_sale"
+                      feild="for_sale_no"
+                      value={false}
+                      isChecked={formData.for_sale ? false : true}
+                      onChange={handleChange}
+                    />
+                    <div className="input-error">{serverError?.feild === "for_sale" ? serverError.message : null}</div>
+
+                    {formData.for_sale ? (
+                      <>
+                        <NumberInput
+                          label="How much will your base cost?"
+                          feild="purchase_price"
+                          required={false}
+                          max={65535}
+                          min={0}
+                          onChange={handleChange}
+                          error={serverError?.feild === "purchase_price" ? serverError.message : null}
+                        />
+
+                        <TextInput
+                          label="What is the currency?"
+                          feild="purchase_item"
+                          max={41}
+                          required={false}
+                          onChange={handleChange}
+                          error={serverError?.feild === "purchase_item" ? serverError.message : null}
+                        />
+
+                        <TextAreaInput
+                          label="Enter your payment instructions"
+                          feild="purchase_method"
+                          max={255}
+                          required={false}
+                          onChange={handleChange}
+                          error={serverError?.feild === "purchase_method" ? serverError.message : null}
+                        />
+                      </>
+                    ) : null}
+                  </section>
+                  <section>
+                    <button type="submit">Upload base</button>
+                  </section>
+                </form>
+              </>
+            )}
           </>
         )}
       </div>
