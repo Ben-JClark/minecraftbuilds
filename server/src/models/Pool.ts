@@ -38,9 +38,15 @@ const sessionStore = new MySQLStore(
   pool as any
 );
 
+// Time in miliseconds
+const minute: number = 60 * 1000;
+const hour: number = 60 * minute;
+const day: number = 24 * hour;
+
 const sessionOptions: session.SessionOptions = {
   secret: process.env.cookie_secret!,
   store: sessionStore,
+  cookie: { maxAge: 14 * day },
   resave: false,
   saveUninitialized: false,
 };
