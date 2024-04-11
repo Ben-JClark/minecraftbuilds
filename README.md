@@ -27,6 +27,7 @@ POST /auth/signin
 Sign out (Delete a session)
 ```
 DELETE /auth/signout
+```
 
 ## Other endpoints
 Get a list of Minecraft servers
