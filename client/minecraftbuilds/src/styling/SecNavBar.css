@@ -8,9 +8,30 @@ nav.sec-nav {
 }
 
 .sec-nav-title {
-  font-size: xx-large;
+  font-size: x-large;
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+/* if > 780 */
+@media (max-width: 780px) {
+  /* Display nav buttons below server title */
+  nav.sec-nav {
+    flex-direction: column;
+  }
+  /* Descrease the title padding */
+  .sec-nav-title {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+}
+
+/* Have larger server name if screen > 905px */
+@media (min-width: 905px) {
+  .sec-nav-title {
+    font-size: xx-large;
+  }
 }
 
 nav.sec-nav ul {

@@ -10,11 +10,11 @@ function PrimNavBar({ isAuthenticated }: Props) {
   return (
     <nav className="prim-nav">
       <Link to="/" className="prim-nav-title">
-        Browse Servers
+        Servers
       </Link>
       <ul>
         <li>
-          <Link to="/privacy">Privacy</Link>
+          <Link to="/legal">Legal</Link>
         </li>
         {isAuthenticated ? (
           <li>
