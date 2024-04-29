@@ -1,12 +1,13 @@
 import "../../styling/PrimNavBar.css";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 interface Props {
   isAuthenticated: boolean;
-  /* setIsAuthenticated: (isAuthenticated: boolean) => void; */
+  screenWidth: number; // Width in pixels
 }
 
-function PrimNavBar({ isAuthenticated }: Props) {
+function PrimNavBar({ isAuthenticated, screenWidth }: Props) {
   return (
     <nav className="prim-nav">
       <Link to="/" className="prim-nav-title">
@@ -25,9 +26,14 @@ function PrimNavBar({ isAuthenticated }: Props) {
             <li>
               <Link to="/sign-in">Sign in</Link>
             </li>
-            <li>
-              <Link to="/sign-up">Sign up</Link>
-            </li>
+            {
+              /* Only show sign up if screen >= 780px */
+              screenWidth >= 780 ? (
+                <li>
+                  <Link to="/sign-up">Sign up</Link>
+                </li>
+              ) : null
+            }
           </>
         )}
       </ul>

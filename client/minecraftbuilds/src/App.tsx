@@ -12,6 +12,8 @@ import "./styling/App.css";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  // The screen width in pixels
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   // Check if the user is authenticated to begin with
   useEffect(() => {
@@ -28,9 +30,22 @@ function App() {
     getBaseList();
   }, []);
 
+  // Set up a listener to keep track of the screen width
+  useEffect(() => {
+    function screenResize() {
+      setScreenWidth(window.innerWidth);
+    }
+    window.addEventListener("resize", screenResize);
+
+    // Remove listener on unmount
+    return () => {
+      window.removeEventListener("resize", screenResize);
+    };
+  }, []);
+
   return (
     <>
-      <PrimNavBar isAuthenticated={isAuthenticated} /* setIsAuthenticated={setIsAuthenticated} */ />
+      <PrimNavBar screenWidth={screenWidth} isAuthenticated={isAuthenticated} />
       <Routes>
         <Route path="/" element={<ServerBrowser />} />
         <Route path="/sign-in" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
@@ -38,7 +53,10 @@ function App() {
         <Route path="/sign-out" element={<SignOut setIsAuthenticated={setIsAuthenticated} />} />
 
         {/* Nested routes for server pages */}
-        <Route path="/server/:serverName/:serverID/*" element={<ServerPage isAuthenticated={isAuthenticated} />} />
+        <Route
+          path="/server/:serverName/:serverID/*"
+          element={<ServerPage screenWidth={screenWidth} isAuthenticated={isAuthenticated} />}
+        />
       </Routes>
     </>
   );

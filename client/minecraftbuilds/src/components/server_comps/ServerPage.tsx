@@ -9,9 +9,10 @@ import { Route, Routes, useParams } from "react-router-dom";
 
 interface Props {
   isAuthenticated: boolean;
+  screenWidth: number;
 }
 
-function ServerPage({ isAuthenticated }: Props) {
+function ServerPage({ isAuthenticated, screenWidth }: Props) {
   // App.tsx loads this component with the path /server/:serverName/*
   // so obtain the server name from the url
   const { serverName, serverID } = useParams();
@@ -22,7 +23,7 @@ function ServerPage({ isAuthenticated }: Props) {
     if (serverName !== undefined && !isNaN(id)) {
       return (
         <>
-          <SecNavBar serverName={serverName} serverID={id} />
+          <SecNavBar screenWidth={screenWidth} serverName={serverName} serverID={id} />
           <div className="grid-main">
             <div className="page">
               <Routes>
