@@ -8,17 +8,10 @@
 }
 
 .sl-item {
-  border: 1px solid black;
-  border-radius: 5px;
   list-style: none;
   margin: 0;
   padding: 0;
   margin-bottom: 10px;
-}
-
-.sl-item:hover {
-  border-color: orange;
-  background-color: lightgrey;
 }
 
 /* Mobile */

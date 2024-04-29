@@ -14,4 +14,9 @@
 
 :root {
   font-family: sans-serif;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
 }

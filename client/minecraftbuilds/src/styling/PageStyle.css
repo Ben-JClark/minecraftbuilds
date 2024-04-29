@@ -1,18 +1,11 @@
 .grid-main {
   display: grid;
+  height: 100%;
+  background-color: #a3b18aff;
 }
 
 .page {
-  grid-area: page;
   background-color: #dad7cdff;
-  display: grid;
-  grid-template-areas: "options" "content";
-}
-.options {
-  grid-area: options;
-}
-.content {
-  grid-area: content;
 }
 #sidebar-l {
   grid-area: sidebar-l;

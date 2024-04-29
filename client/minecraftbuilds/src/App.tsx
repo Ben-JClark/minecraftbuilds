@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import PrimNavBar from "./components/ui_components/PrimNavBar";
-import ServerBrowser from "./components/ServerList";
+import ServerList from "./components/ServerList";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import ServerPage from "./components/server_comps/ServerPage";
@@ -47,7 +47,7 @@ function App() {
     <>
       <PrimNavBar screenWidth={screenWidth} isAuthenticated={isAuthenticated} />
       <Routes>
-        <Route path="/" element={<ServerBrowser />} />
+        <Route path="/" element={<ServerList />} />
         <Route path="/sign-in" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-out" element={<SignOut setIsAuthenticated={setIsAuthenticated} />} />
