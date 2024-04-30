@@ -12,26 +12,27 @@ function BaseListing({ base }: Props) {
   };
 
   return (
-    <div onClick={handleClick} className="b-button">
+    <div onClick={handleClick} className="b-li">
       <div className="b-title">
-        <h2>{base.baseName}</h2>
+        <h3>{base.baseName}</h3>
       </div>
-      <div className="b-sale">
+      {/* <div className="b-sale">
         <p>{base.forSale ? `For Sale. ${base.purchasePrice} ${base.purchaseItem}` : null}</p>
-      </div>
+      </div> */}
       <img
         src={`http://localhost:5000/base-${String(base.mainImageName)}.png`}
         alt={base.baseName}
         className="b-image"
       ></img>
-      <div className="b-tags">
+      <div className="b-username">{base.ownerName}</div>
+      {/* <div className="b-tags">
         <p>
           Listed by {base.ownerName} {timeSince(base.listedDate)} ago
         </p>
         <p>
           Located {base.xCord} // {base.zCord}
         </p>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,14 +1,9 @@
-.b-button {
-  cursor: pointer;
-}
-
 .b-title {
   text-align: center;
-  background-color: lightgrey;
 }
 
-.b-title h2 {
-  margin: 0;
+.b-title h3 {
+  margin: 0.5rem;
 }
 
 .b-sale {
@@ -22,14 +17,26 @@
 .b-image {
   aspect-ratio: 2 / 1;
   width: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
-.b-tags {
-  background-color: lightgray;
+.b-li {
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: white;
+}
+
+.b-li:hover {
+  background-color: lightgrey;
+}
+
+/* .b-tags {
   padding-left: 2%;
   padding-right: 2%;
 }
 
 .b-tags p {
   margin: 0;
-}
+} */
