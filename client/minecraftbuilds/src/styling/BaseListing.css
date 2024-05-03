@@ -32,6 +32,12 @@
   background-color: lightgrey;
 }
 
+.b-username {
+  font-style: italic;
+  padding-left: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
 /* .b-tags {
   padding-left: 2%;
   padding-right: 2%;

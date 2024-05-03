@@ -1,5 +1,10 @@
-.bases h1 {
+/* .bases h1 {
   text-align: center;
+} */
+
+.bases .options {
+  text-align: center;
+  padding-bottom: 1rem;
 }
 
 .b-container {

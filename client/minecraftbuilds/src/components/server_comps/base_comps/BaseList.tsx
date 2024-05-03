@@ -78,6 +78,7 @@ function Bases({ serverName, serverID }: Props) {
     <div className="bases">
       <div className="options">
         <h1>{serverName} Bases</h1>
+        <LinkButton buttonText="Add base" url={`/server/${serverName}/${serverID}/bases/add`} />
       </div>
       <div className="content">
         {/* Display any errors*/}
@@ -86,7 +87,6 @@ function Bases({ serverName, serverID }: Props) {
             {serverError.feild} {serverError.message}{" "}
           </div>
         ) : null}
-        <LinkButton buttonText="Add base" url={`/server/${serverName}/${serverID}/bases/add`} />
         <ul className="b-container">
           {baseList.map((base: BasePreview) => (
             <li className="b-item" key={base.baseId}>

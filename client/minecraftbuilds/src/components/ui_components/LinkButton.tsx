@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import "../../styling/LinkButton.css";
 
 interface Props {
   buttonText: string;
@@ -8,7 +9,7 @@ interface Props {
 function LinkButton({ url, buttonText }: Props) {
   return (
     <Link to={url}>
-      <button>{buttonText}</button>
+      <button className="link-button">{buttonText}</button>
     </Link>
   );
 }

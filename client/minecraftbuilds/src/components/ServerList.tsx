@@ -66,7 +66,7 @@ function ServerBrowser() {
     <>
       <div className="grid-main">
         <div className="page">
-          <div className="options">options</div>
+          <div className="options">{/*options*/}</div>
           <div className="content">
             {/* Display any errors*/}
             {serverError !== null ? <div className="generic-error"> {serverError.message} </div> : null}
