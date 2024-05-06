@@ -28,14 +28,20 @@
   background-color: white;
 }
 
-.b-li:hover {
-  background-color: lightgrey;
-}
-
 .b-username {
   font-style: italic;
-  padding-left: 0.5rem;
-  padding-bottom: 0.5rem;
+}
+
+.b-li-container {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  margin: 0rem 0.5rem 0.5rem 0.5rem;
+}
+
+.b-li-container .link-button {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 
 /* .b-tags {

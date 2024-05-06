@@ -1,5 +1,6 @@
 import type { BasePreview } from "./BaseList";
 import { timeSince } from "../../ServerListing";
+import LinkButton from "../../ui_components/LinkButton";
 import "../../../styling/BaseListing.css";
 
 interface Props {
@@ -7,12 +8,8 @@ interface Props {
 }
 
 function BaseListing({ base }: Props) {
-  const handleClick = () => {
-    console.log("You selected: ", base.baseName);
-  };
-
   return (
-    <div onClick={handleClick} className="b-li">
+    <div className="b-li">
       <div className="b-title">
         <h3>{base.baseName}</h3>
       </div>
@@ -24,7 +21,11 @@ function BaseListing({ base }: Props) {
         alt={base.baseName}
         className="b-image"
       ></img>
-      <div className="b-username">{base.ownerName}</div>
+      <div className="b-li-container">
+        <div className="b-username">{base.ownerName}</div>
+        <LinkButton buttonText="View" url={`${base.baseId}`} />
+      </div>
+
       {/* <div className="b-tags">
         <p>
           Listed by {base.ownerName} {timeSince(base.listedDate)} ago

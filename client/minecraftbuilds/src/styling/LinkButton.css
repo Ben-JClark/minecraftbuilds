@@ -4,3 +4,9 @@
   cursor: pointer;
   padding: 0.5rem 1rem 0.5rem 1rem;
 }
+
+.link-button:hover {
+  background-color: #a3b18aff;
+  color: #344e41ff;
+  transition-duration: 250ms;
+}
