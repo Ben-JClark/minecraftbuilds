@@ -42,7 +42,7 @@ function validBase(base: Base): void {
     throw new CustomError(400, "owner_id", err instanceof CustomError ? err.message : "something went wrong");
   }
   try {
-    validVarchar(base.base_name, 1, 32);
+    validVarchar(base.base_name, 1, 16);
   } catch (err: unknown) {
     throw new CustomError(400, "base_name", err instanceof CustomError ? err.message : "something went wrong");
   }

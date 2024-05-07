@@ -22,7 +22,9 @@
 @media (max-width: 640px) {
   .grid-main {
     grid-template-areas: "page";
-    grid-template-columns: 1fr;
+    grid-template-columns: 100%;
+    /* grid-template-areas: "sidebar-l page sidebar-r";
+    grid-template-columns: 5% 90% 5%; */
   }
 }
 /* Laptop / Tablet */
