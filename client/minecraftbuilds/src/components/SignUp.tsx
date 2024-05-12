@@ -78,69 +78,75 @@ function SignUp() {
 
   return (
     <>
-      {success === true ? (
-        <MessageBox
-          message="You have successfully signed up, now you can sign in"
-          buttonText="Sign in"
-          url="/sign-in"
-        />
-      ) : (
-        <>
-          <div className="options">
-            <h1>Sign Up</h1>
-          </div>
-          <div className="content">
-            {serverError !== null ? (
-              <div className="generic-error">
-                {serverError.feild} {serverError.message}{" "}
+      <div className="grid-main">
+        <div className="page">
+          {success === true ? (
+            <MessageBox
+              message="You have successfully signed up, now you can sign in"
+              buttonText="Sign in"
+              url="/sign-in"
+            />
+          ) : (
+            <>
+              <div className="options">
+                <h1>Sign Up</h1>
               </div>
-            ) : null}
-            <form onSubmit={handleSubmit}>
-              <TextInput
-                label="Enter your username"
-                feild="username"
-                max={16}
-                required={true}
-                onChange={handleChange}
-                error={serverError?.feild === "username" ? serverError.message : null}
-              />
-              <EmailInput
-                label="Enter your email"
-                feild="email"
-                max={254}
-                required={true}
-                onChange={handleChange}
-                error={serverError?.feild === "email" ? serverError.message : null}
-              />
-              <PasswordInput
-                label="Enter your password"
-                feild="password"
-                onChange={handleChange}
-                error={serverError?.feild === "password" ? serverError.message : null}
-              />
-              <PasswordInput
-                label="Confirm your password"
-                feild="confirm_password"
-                onChange={handleChange}
-                error={serverError?.feild === "confirm_password" ? serverError.message : null}
-              />
+              <div className="content">
+                {serverError !== null ? (
+                  <div className="generic-error">
+                    {serverError.feild} {serverError.message}{" "}
+                  </div>
+                ) : null}
+                <form onSubmit={handleSubmit}>
+                  <TextInput
+                    label="Enter your username"
+                    feild="username"
+                    max={16}
+                    required={true}
+                    onChange={handleChange}
+                    error={serverError?.feild === "username" ? serverError.message : null}
+                  />
+                  <EmailInput
+                    label="Enter your email"
+                    feild="email"
+                    max={254}
+                    required={true}
+                    onChange={handleChange}
+                    error={serverError?.feild === "email" ? serverError.message : null}
+                  />
+                  <PasswordInput
+                    label="Enter your password"
+                    feild="password"
+                    onChange={handleChange}
+                    error={serverError?.feild === "password" ? serverError.message : null}
+                  />
+                  <PasswordInput
+                    label="Confirm your password"
+                    feild="confirm_password"
+                    onChange={handleChange}
+                    error={serverError?.feild === "confirm_password" ? serverError.message : null}
+                  />
 
-              {/* Display if the passwords match when they input 8 or more characters */}
-              {formData.password.length >= 8 && confirmedPassword.length >= 8 ? (
-                formData.password === confirmedPassword ? (
-                  <div>Passwords match</div>
-                ) : (
-                  <div className="input-error">Passwords don't match</div>
-                )
-              ) : null}
+                  {/* Display if the passwords match when they input 8 or more characters */}
+                  {formData.password.length >= 8 && confirmedPassword.length >= 8 ? (
+                    formData.password === confirmedPassword ? (
+                      <div>Passwords match</div>
+                    ) : (
+                      <div className="input-error">Passwords don't match</div>
+                    )
+                  ) : null}
 
-              <button type="submit">Sign up</button>
-            </form>
-            {`Already have an account? `}
-            <Link to={`/sign-in`}>Sign In</Link>
-          </div>
-        </>
-      )}
+                  <button type="submit">Sign up</button>
+                </form>
+                {`Already have an account? `}
+                <Link to={`/sign-in`}>Sign In</Link>
+              </div>
+            </>
+          )}
+        </div>
+        <div className="sidebar" id="sidebar-l"></div>
+        <div className="sidebar" id="sidebar-r"></div>
+      </div>
     </>
   );
 }

@@ -66,44 +66,48 @@ function SignIn({ setIsAuthenticated }: Props) {
   }
 
   return (
-    <>
-      {success === true ? (
-        <MessageBox message="You have successfully signed in" buttonText="Browse Servers" url="/" />
-      ) : (
-        <>
-          <div className="options">
-            <h1>Sign In</h1>
-          </div>
-          <div className="content">
-            {serverError !== null ? (
-              <div className="generic-error">
-                {serverError.feild} {serverError.message}{" "}
-              </div>
-            ) : null}
-            <form onSubmit={handleSubmit}>
-              <EmailInput
-                label="Enter your email"
-                feild="email"
-                max={254}
-                required={true}
-                onChange={handleChange}
-                error={serverError?.feild === "email" ? serverError.message : null}
-              />
-              <PasswordInput
-                label="Enter your password"
-                feild="password"
-                onChange={handleChange}
-                error={serverError?.feild === "password" ? serverError.message : null}
-              />
+    <div className="grid-main">
+      <div className="page">
+        {success === true ? (
+          <MessageBox message="You have successfully signed in" buttonText="Browse Servers" url="/" />
+        ) : (
+          <>
+            <div className="options">
+              <h1>Sign In</h1>
+            </div>
+            <div className="content">
+              {serverError !== null ? (
+                <div className="generic-error">
+                  {serverError.feild} {serverError.message}{" "}
+                </div>
+              ) : null}
+              <form onSubmit={handleSubmit}>
+                <EmailInput
+                  label="Enter your email"
+                  feild="email"
+                  max={254}
+                  required={true}
+                  onChange={handleChange}
+                  error={serverError?.feild === "email" ? serverError.message : null}
+                />
+                <PasswordInput
+                  label="Enter your password"
+                  feild="password"
+                  onChange={handleChange}
+                  error={serverError?.feild === "password" ? serverError.message : null}
+                />
 
-              <button type="submit">Sign in</button>
-            </form>
-            {`Don't have an account? `}
-            <Link to={`/sign-up`}>Sign Up</Link>
-          </div>
-        </>
-      )}
-    </>
+                <button type="submit">Sign in</button>
+              </form>
+              {`Don't have an account? `}
+              <Link to={`/sign-up`}>Sign Up</Link>
+            </div>
+          </>
+        )}
+      </div>
+      <div className="sidebar" id="sidebar-l"></div>
+      <div className="sidebar" id="sidebar-r"></div>
+    </div>
   );
 }
 

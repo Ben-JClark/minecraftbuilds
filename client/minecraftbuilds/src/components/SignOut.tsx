@@ -42,18 +42,25 @@ function SignOut({ setIsAuthenticated }: Props) {
   }
   return (
     <>
-      {success === true ? (
-        <MessageBox message="You have successfully signed out" buttonText="Back to server browser" url="/" />
-      ) : (
-        <>
-          {serverError !== null ? (
-            <div className="generic-error">
-              {serverError.feild} {serverError.message}{" "}
-            </div>
-          ) : null}
-          <button onClick={handleSignOut}>Sign Out</button>
-        </>
-      )}
+      <div className="grid-main">
+        <div className="page">
+          {success === true ? (
+            <MessageBox message="You have successfully signed out" buttonText="Back to server browser" url="/" />
+          ) : (
+            <>
+              {serverError !== null ? (
+                <div className="generic-error">
+                  {serverError.feild} {serverError.message}{" "}
+                </div>
+              ) : null}
+              <p>Are you sure you want to sign out?</p>
+              <button onClick={handleSignOut}>Sign Out</button>
+            </>
+          )}
+        </div>
+        <div className="sidebar" id="sidebar-l"></div>
+        <div className="sidebar" id="sidebar-r"></div>
+      </div>
     </>
   );
 }
